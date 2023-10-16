@@ -10,10 +10,10 @@ import { ModeToggle } from "@/components/theme-toggle";
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
-      <div className="container flex items-center h-16 space-x-4 sm:justify-between sm:space-x-0">
+      <div className="sm:px-8 px-4 flex items-center h-16 space-x-4 sm:justify-between sm:space-x-0">
         {/* <MainNav items={siteConfig.mainNav} /> */}
         <nav className="flex gap-4 items-center">
-          <div className="font-bold text-xl tracking-tight">
+          <div className="font-bold text-2xl tracking-tight">
             <Link href="/">CodeChat</Link>{" "}
           </div>
           <div className="text-md">
