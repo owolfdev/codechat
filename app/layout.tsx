@@ -38,7 +38,11 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <SiteHeader />
-            <div className="flex-1">{children}</div>
+            <div className="flex-1">
+              <main className="flex flex-col items-center justify-between sm:px-24 sm:py-24 py-8 px-8 gap-4">
+                {children}
+              </main>
+            </div>
             <Footer />
           </ThemeProvider>
         </body>
