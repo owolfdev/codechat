@@ -49,6 +49,7 @@ https://clerk.com/docs/integrations/databases/supabase#integrate-supabase-with-c
    - Implement proper error handling and logging to diagnose and address authentication-related issues effectively.
 
 10. **Testing and Verification**:
+
     - Thoroughly test the integration between Clerk and Supabase to ensure that user authentication, roles, and permissions work as expected.
 
 By coordinating Clerk authentication with Supabase, you can create a robust and secure user authentication system while leveraging the features and scalability of Supabase for your chat application. Be sure to refer to the documentation of both Clerk and Supabase for detailed integration guides and best practices specific to your chosen authentication providers and use cases.
@@ -98,23 +99,38 @@ Designing a database schema for a chat application in Supabase involves creating
 
 3. **Chat Participants Table**:
 
-   - Create a table to associate users with chat rooms.
-   - Include columns such as:
-     - `participant_id` (Primary Key): A unique identifier for each participant.
-     - `user_id`: Foreign key referencing the `user_id` in the Users table.
-     - `chat_room_id`: Foreign key referencing the `chat_room_id` in the Chat Rooms table.
-     - `joined_at`: Timestamp indicating when the user joined the chat room.
+```sql
 
-   ```plaintext
-   chat_participants
-   +----------------+---------+--------------+---------------------+
-   | participant_id | user_id | chat_room_id |     joined_at      |
-   +----------------+---------+--------------+---------------------+
-   |       1        |   1     |      1       | 2023-10-18 14:05:00|
-   |       2        |   2     |      1       | 2023-10-18 14:10:00|
-   |       3        |   2     |      2       | 2023-10-18 14:15:00|
-   +----------------+---------+--------------+---------------------+
-   ```
+id   chatRoom   participant
+001  C1         U1
+002  C1         U2
+003  C2         U2
+004  C2         U3
+005  C3         U1
+006  C3         U2
+007  C3         U3
+
+SELECT participant FROM participants WHERE chatRoom = 'C1';
+
+```
+
+- Create a table to associate users with chat rooms.
+- Include columns such as:
+  - `participant_id` (Primary Key): A unique identifier for each participant.
+  - `user_id`: Foreign key referencing the `user_id` in the Users table.
+  - `chat_room_id`: Foreign key referencing the `chat_room_id` in the Chat Rooms table.
+  - `joined_at`: Timestamp indicating when the user joined the chat room.
+
+```plaintext
+chat_participants
++----------------+---------+--------------+---------------------+
+| participant_id | user_id | chat_room_id |     joined_at      |
++----------------+---------+--------------+---------------------+
+|       1        |   1     |      1       | 2023-10-18 14:05:00|
+|       2        |   2     |      1       | 2023-10-18 14:10:00|
+|       3        |   2     |      2       | 2023-10-18 14:15:00|
++----------------+---------+--------------+---------------------+
+```
 
 4. **Chat Messages Table**:
 
