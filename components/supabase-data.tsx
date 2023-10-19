@@ -102,7 +102,7 @@ export default function SupabaseData() {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="font-bold text-2xl">Supabase Data Insert and Fetch</h2>
-      <div>{user?.emailAddresses[0].emailAddress}'s data:</div>
+      <div>{user?.emailAddresses[0].emailAddress}&apos;s data:</div>
       <div>Data items: {currentUsersData.length}</div>
       <div>{JSON.stringify(currentUsersData)}</div>
       <button onClick={fetchData}>Fetch data</button>
