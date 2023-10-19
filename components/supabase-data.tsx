@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import { useUser } from "@clerk/nextjs";
 import { createClient } from "@supabase/supabase-js";
@@ -20,6 +20,42 @@ const supabaseClient = async (supabaseAccessToken: any) => {
 export default function SupabaseData() {
   const { getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
+  const [currentUsersData, setCurrentUsersData] = useState<any[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string>("");
+
+  const getDataForCurrentUser = async () => {
+    const supabaseAccessToken = await getToken({
+      template: "supabase-codechat",
+    });
+
+    const supabase = await supabaseClient(supabaseAccessToken);
+
+    const { data, error } = await supabase
+      .from("test_table")
+      .select()
+      .eq("user", user?.id); // Filter data by the current user's ID
+
+    console.log("current user id", user?.id);
+
+    console.log("data for current user:", data, "error:", error);
+    return data;
+  };
+
+  useEffect(() => {
+    if (user && user.id) {
+      console.log("user:", user.id);
+      setCurrentUserId(user.id);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    console.log("current user id:", currentUserId);
+    if (currentUserId) {
+      getDataForCurrentUser().then((data: any) => {
+        setCurrentUsersData(data);
+      });
+    }
+  }, [currentUserId]);
 
   const fetchData = async () => {
     console.log("fetching data");
@@ -60,14 +96,15 @@ export default function SupabaseData() {
       .from("test_table")
       .insert(dataToInsert);
 
-    console.log("data:", data, "error:", error);
-
     // TODO #3: Handle the response
   };
 
   return (
     <div className="flex flex-col gap-2">
       <h2 className="font-bold text-2xl">Supabase Data Insert and Fetch</h2>
+      <div>{user?.emailAddresses[0].emailAddress}'s data:</div>
+      <div>Data items: {currentUsersData.length}</div>
+      <div>{JSON.stringify(currentUsersData)}</div>
       <button onClick={fetchData}>Fetch data</button>
       <button onClick={addData}>Add data</button>
     </div>
