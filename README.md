@@ -123,13 +123,14 @@ SELECT participant FROM participants WHERE chatRoom = 'C1';
 
 ```plaintext
 chat_participants
-+----------------+---------+--------------+---------------------+
-| participant_id | user_id | chat_room_id |     joined_at      |
-+----------------+---------+--------------+---------------------+
-|       1        |   1     |      1       | 2023-10-18 14:05:00|
-|       2        |   2     |      1       | 2023-10-18 14:10:00|
-|       3        |   2     |      2       | 2023-10-18 14:15:00|
-+----------------+---------+--------------+---------------------+
++----------------+---------+--------------+---------------------+------------------+
+| participant_id | user_id | chat_room_id |     joined_at      | invitation_status|
++----------------+---------+--------------+---------------------+------------------+
+|       1        |   1     |      1       | 2023-10-18 14:05:00|    accepted      |
+|       2        |   2     |      1       | 2023-10-18 14:10:00|    rejected      |
+|       3        |   2     |      2       | 2023-10-18 14:15:00|    pending       |
++----------------+---------+--------------+---------------------+------------------+
+
 ```
 
 4. **Chat Messages Table**:
@@ -152,5 +153,31 @@ chat_participants
    |      3      |      2       |    2      | Welcome to Room| 2023-10-18 14:12:00|
    +-------------+--------------+-----------+----------------+---------------------+
    ```
+
+5. **Activity Log**
+
+```plaintext
+activity_log
++------------+-----------------+--------------+--------------+--------------+---------------------+
+| log_id     | action_type     | admin_id     | user_id      | chat_room_id | timestamp           |
++------------+-----------------+--------------+--------------+--------------+---------------------+
+| 1          | removal         | admin1_id    | removed_user1_id | chat_room1_id | 2023-10-18 15:00:00|
+| 2          | removal         | admin2_id    | removed_user2_id | chat_room2_id | 2023-10-18 15:05:00|
++------------+-----------------+--------------+--------------+--------------+---------------------+
+
+```
+
+6. **Notifications**
+
+```plaintext
+notifications
++----------------+--------------+-------------------------+---------------------+--------------+
+| notification_id | user_id      | notification_type       | created_at          | read_status  |
++----------------+--------------+-------------------------+---------------------+--------------+
+| 1              | user1        | message_received         | 2023-10-18 15:00:00| unread       |
+| 2              | user2        | new_chat_room           | 2023-10-18 15:02:00| read         |
+| 3              | user1        | friend_request_accepted | 2023-10-18 15:05:00| unread       |
++----------------+--------------+-------------------------+---------------------+--------------+
+```
 
 This is a basic database schema outline for a chat application in Supabase. Depending on your application's specific requirements, you may need to add more features and tables, such as message threading, message attachments, or additional user profile data. Additionally, consider indexes and constraints to optimize query performance and ensure data integrity.
