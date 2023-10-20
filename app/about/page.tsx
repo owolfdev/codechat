@@ -1,4 +1,7 @@
 import React from "react";
+import AuthMessage from "@/components/auth-message";
+import SupabaseData from "@/components/supabase-data";
+import Users from "@/components/users";
 
 function About() {
   const aboutMessage =
@@ -8,6 +11,9 @@ function About() {
     <>
       <h1 className="text-4xl font-bold">About</h1>
       <div className="flex flex-col gap-4 w-full">{aboutMessage}</div>
+      <Users />
+      <SupabaseData />
+      <AuthMessage />
     </>
   );
 }

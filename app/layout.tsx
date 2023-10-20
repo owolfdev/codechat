@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { IBM_Plex_Mono } from "next/font/google";
+import { Open_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/nav/site-header";
 
@@ -12,10 +13,13 @@ export const metadata: Metadata = {
   description: "Code Chat is a chat app for developers.",
 };
 
+const openSans = Open_Sans({
+  subsets: ["latin"],
+});
+
 const IBM_Plex = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--ibm-plex-mono",
 });
 
 export default function RootLayout({
@@ -28,9 +32,12 @@ export default function RootLayout({
       <html
         lang="en"
         suppressHydrationWarning
-        className={`${IBM_Plex.variable} ibm-plex-mono`}
+        // className={`${IBM_Plex.variable} ibm-plex-mono`}
       >
-        <body className="flex flex-col min-h-screen">
+        <body
+          className={`ibm-plex-mono flex flex-col min-h-screen`}
+          style={IBM_Plex.style}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
