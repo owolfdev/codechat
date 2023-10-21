@@ -1,9 +1,9 @@
-import CreateChat from "@/components/create-chat";
+import ChatContainer from "@/components/chat/chat-container";
 export default async function Home() {
+  // await createDefaultChat();
   return (
-    <>
-      <h1 className="text-4xl font-bold">Home</h1>
-      <CreateChat />
-    </>
+    <div>
+      <ChatContainer />
+    </div>
   );
 }
