@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 
 export function useSupabaseChat() {
+  //
   const { isLoaded, isSignedIn, user } = useUser();
   const { getToken } = useAuth();
   const [defaultChatRoomExists, setDefaultChatRoomExists] = useState(false);
@@ -66,7 +67,8 @@ export function useSupabaseChat() {
         console.error(error);
       } else {
         console.log("This user does not have a chat room.");
-        await createDefaultChatRoom();
+        const data = await createDefaultChatRoom();
+        console.log("data for create default chat room", data);
       }
     }
   };
@@ -92,6 +94,62 @@ export function useSupabaseChat() {
       } else {
         console.log("Default chat room created successfully.");
         setDefaultChatRoomExists(true);
+
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const editChatRoomName = async (
+    roomId: string,
+    newName: string,
+    description: string
+  ) => {
+    if (isLoaded && isSignedIn && user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      const { data, error } = await supabase
+        .from("chat_rooms")
+        .update({ name: newName, description: description })
+        .eq("chat_room_id", roomId)
+        .eq("admin_id", user.id);
+
+      if (error) {
+        console.error(error);
+        alert("Error editing chat room name");
+      } else {
+        console.log("Chat room name updated successfully.");
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const createChatRoom = async (name: string, description: string) => {
+    console.log("Creating a new chat room...");
+    if (isLoaded && isSignedIn && user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      const { data, error } = await supabase.from("chat_rooms").insert([
+        {
+          name,
+          description: description || "",
+          admin_id: user.id,
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+        alert("Error creating chat room");
+      } else {
+        console.log("Chat room created successfully.");
         // You can add any additional logic here if needed
       }
     }
@@ -99,5 +157,7 @@ export function useSupabaseChat() {
 
   return {
     getChatRooms,
+    createChatRoom,
+    editChatRoomName,
   };
 }

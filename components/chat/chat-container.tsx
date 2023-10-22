@@ -4,6 +4,9 @@ import { useState, useEffect } from "react";
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 import { useUser } from "@clerk/nextjs";
 import ChatList from "./chat-list";
+import CreateChat from "./create-chat";
+import EditChat from "./edit-chat";
+import Invite from "./invite-contacts";
 
 interface ChatRoom {
   chat_room_id: string;
@@ -34,14 +37,20 @@ function ChatContainer() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <>
+        <div className="flex flex-col gap-4">
           <ChatList
             selectedChatRoom={selectedChatRoom}
             setSelectedChatRoom={setSelectedChatRoom}
             chatRooms={chatRooms}
+            setChatRooms={setChatRooms}
           />
-          {selectedChatRoom && selectedChatRoom.chat_room_id}
-        </>
+
+          <div className="flex gap-4">
+            <CreateChat />
+            <EditChat selectedChatRoom={selectedChatRoom} />
+            <Invite selectedChatRoom={selectedChatRoom} />
+          </div>
+        </div>
       )}
     </div>
   );
