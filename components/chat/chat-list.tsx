@@ -70,21 +70,25 @@ function ChatList({
             "new:",
             payload.new
           );
-          setSelectedChatRoom(payload.new);
-          setChatRooms((prevChatRooms) => {
-            return prevChatRooms.map((chatRoom) => {
-              if (chatRoom.chat_room_id === payload.new.chat_room_id) {
-                return payload.new;
-              } else {
-                return chatRoom;
-              }
-            });
-          });
-          console.log(
-            "set selected chat room to local storage for INSERT new chat room",
-            payload.new
+
+          // Check if the chat room already exists in chatRooms
+          const roomExists = chatRooms.some(
+            (room) => room.chat_room_id === payload.new.chat_room_id
           );
-          localStorage.setItem("selectedChatRoom", JSON.stringify(payload.new));
+
+          if (!roomExists) {
+            console.log("room does not exist, adding to chatRooms!!!!!!!!!!!!");
+            setSelectedChatRoom(payload.new);
+            setChatRooms((prevChatRooms) => [...prevChatRooms, payload.new]);
+            console.log(
+              "set selected chat room to local storage for INSERT new chat room",
+              payload.new
+            );
+            localStorage.setItem(
+              "selectedChatRoom",
+              JSON.stringify(payload.new)
+            );
+          }
         }
       )
       .on(

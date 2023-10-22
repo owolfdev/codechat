@@ -53,21 +53,21 @@ function EditChat({ selectedChatRoom }: any) {
   const { isDirty, isValid } = useFormState({ control });
 
   const handleUpdateZodState = () => {
-    console.log("handleUpdateZodState");
+    // console.log("handleUpdateZodState");
     form.trigger();
   };
 
   const handleResetDialog = () => {
     form.reset();
     if (selectedChatRoom) {
-      console.log("selectedChatRoom from edit chat:", selectedChatRoom);
+      // console.log("selectedChatRoom from edit chat:", selectedChatRoom);
       form.setValue("name", selectedChatRoom?.name);
       form.setValue("description", selectedChatRoom?.description);
     }
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    // console.log(values);
     editChatRoomName(
       selectedChatRoom?.chat_room_id,
       values.name,
@@ -77,7 +77,7 @@ function EditChat({ selectedChatRoom }: any) {
 
   useEffect(() => {
     if (selectedChatRoom) {
-      console.log("selectedChatRoom from edit chat:", selectedChatRoom);
+      // console.log("selectedChatRoom from edit chat:", selectedChatRoom);
       form.setValue("name", selectedChatRoom?.name);
       form.setValue("description", selectedChatRoom?.description);
     }

@@ -54,7 +54,7 @@ function CreateChat() {
   const { isDirty, isValid } = useFormState({ control });
 
   const handleUpdateZodState = () => {
-    console.log("handleUpdateZodState");
+    // console.log("handleUpdateZodState");
     form.trigger();
   };
 
@@ -63,7 +63,7 @@ function CreateChat() {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    // console.log(values);
     createChatRoom(values.name, values.description as string);
   }
 
