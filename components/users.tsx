@@ -3,6 +3,7 @@ import { getAllUsers } from "@/lib/clerkUtils";
 
 async function Users() {
   const users = await getAllUsers();
+
   return (
     <div className="flex flex-col gap-4">
       <div>Users:</div>

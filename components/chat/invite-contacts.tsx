@@ -1,6 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import Select from "react-select";
+
+// import { getAllUsers } from "@/lib/clerkUtils";
+
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -36,7 +41,13 @@ const formSchema = z.object({
   invite: z.string().optional(),
 });
 
-function Invite({ selectedChatRoom }: any) {
+function Invite({
+  selectedChatRoom,
+  users,
+}: {
+  selectedChatRoom: any;
+  users: any;
+}) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,9 +56,29 @@ function Invite({ selectedChatRoom }: any) {
     },
   });
 
-  const { control } = form;
+  const { control, handleSubmit, setValue, getValues } = form;
 
   const { isDirty, isValid } = useFormState({ control });
+
+  // const [users, setUsers] = useState<any[]>([]);
+  const [selectedUser, setSelectedUser] = useState<any | null>(null);
+
+  // useEffect(() => {
+  //   const getUsers = async () => {
+  //     const users = await getAllUsers();
+  //     console.log("users from getUsers, initial load:", users);
+  //     setUsers(users);
+  //   };
+  //   getUsers();
+  // }, []);
+
+  useEffect(() => {
+    console.log("selectedUser:", selectedUser);
+  }, [selectedUser]);
+
+  useEffect(() => {
+    console.log("users:", users);
+  }, [users]);
 
   const handleUpdateZodState = () => {
     console.log("handleUpdateZodState");
@@ -59,8 +90,16 @@ function Invite({ selectedChatRoom }: any) {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+    console.log("onSubmit");
+    // console.log(values);
+    // console.log(selectedUser);
   }
+
+  const handleInviteUser = () => {
+    console.log("handleInviteUser");
+    console.log(getValues("invite"));
+    console.log("selectedUser", selectedUser);
+  };
 
   return (
     <>
@@ -82,23 +121,6 @@ function Invite({ selectedChatRoom }: any) {
                 className="space-y-4"
                 onChange={handleUpdateZodState}
               >
-                {/* <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Edit the title of your chat room"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                 <FormField
                   control={form.control}
                   name="invite"
@@ -106,9 +128,40 @@ function Invite({ selectedChatRoom }: any) {
                     <FormItem>
                       <FormLabel>Invite</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Invite one or more contacts to your chat"
-                          {...field}
+                        <Select
+                          className="text-black"
+                          // Add custom styles here, similar to the example
+                          styles={{}}
+                          // Options for user selection (users array)
+                          options={users?.map((user: any) => ({
+                            value: user.emailAddresses[0].emailAddress, // Set value to email address
+                            label: user.emailAddresses[0].emailAddress,
+                          }))}
+                          // Handle user selection
+                          onChange={(selectedOption) => {
+                            const selectedUser = users.find(
+                              (user: any) =>
+                                user.emailAddresses[0].emailAddress ===
+                                selectedOption?.value
+                            );
+
+                            setSelectedUser(selectedUser);
+                            // Set the value to the email address
+                            setValue("invite", selectedOption?.value || "");
+                          }}
+                          // Value for the selected user (email address)
+                          value={
+                            selectedUser
+                              ? {
+                                  value:
+                                    selectedUser.emailAddresses[0].emailAddress, // Set value to email address
+                                  label:
+                                    selectedUser.emailAddresses[0].emailAddress,
+                                }
+                              : null
+                          }
+                          // Allow multiple selections if needed
+                          isMulti={false}
                         />
                       </FormControl>
 
@@ -120,7 +173,7 @@ function Invite({ selectedChatRoom }: any) {
                   {isValid ? (
                     <Button type="submit">Invite</Button>
                   ) : (
-                    <Button disabled={true} type="submit">
+                    <Button onClick={handleInviteUser} type="submit">
                       Invite
                     </Button>
                   )}

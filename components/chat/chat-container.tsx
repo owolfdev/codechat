@@ -13,7 +13,7 @@ interface ChatRoom {
   name: string;
 }
 
-function ChatContainer() {
+function ChatContainer({ users }: { users: any }) {
   const { getChatRooms } = useSupabaseChat();
   const { isLoaded, isSignedIn, user } = useUser();
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ function ChatContainer() {
           <div className="flex gap-4">
             <CreateChat />
             <EditChat selectedChatRoom={selectedChatRoom} />
-            <Invite selectedChatRoom={selectedChatRoom} />
+            <Invite selectedChatRoom={selectedChatRoom} users={users} />
           </div>
           <ChatList
             selectedChatRoom={selectedChatRoom}

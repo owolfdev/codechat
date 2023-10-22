@@ -41,7 +41,7 @@ function ChatList({
   }, []);
 
   const handleChatRoomSelect = (room: ChatRoom) => {
-    console.log("update", room);
+    // console.log("update", room);
     setSelectedChatRoom(room);
     localStorage.setItem("selectedChatRoom", JSON.stringify(room));
   };
@@ -63,13 +63,13 @@ function ChatList({
           table: "chat_rooms",
         },
         (payload: any) => {
-          console.log(
-            "SUPABASE insert for chat_rooms payload:",
-            "old:",
-            payload.old,
-            "new:",
-            payload.new
-          );
+          // console.log(
+          //   "SUPABASE insert for chat_rooms payload:",
+          //   "old:",
+          //   payload.old,
+          //   "new:",
+          //   payload.new
+          // );
 
           // Check if the chat room already exists in chatRooms
           const roomExists = chatRooms.some(
@@ -77,13 +77,22 @@ function ChatList({
           );
 
           if (!roomExists) {
-            console.log("room does not exist, adding to chatRooms!!!!!!!!!!!!");
             setSelectedChatRoom(payload.new);
-            setChatRooms((prevChatRooms) => [...prevChatRooms, payload.new]);
-            console.log(
-              "set selected chat room to local storage for INSERT new chat room",
-              payload.new
-            );
+            setChatRooms((prevChatRooms) => {
+              // Use prevState to ensure you have the latest state
+              if (
+                !prevChatRooms.some(
+                  (room) => room.chat_room_id === payload.new.chat_room_id
+                )
+              ) {
+                return [...prevChatRooms, payload.new];
+              }
+              return prevChatRooms; // No change needed
+            });
+            // console.log(
+            //   "set selected chat room to local storage for INSERT new chat room",
+            //   payload.new
+            // );
             localStorage.setItem(
               "selectedChatRoom",
               JSON.stringify(payload.new)
@@ -100,23 +109,21 @@ function ChatList({
         },
         (payload: any) => {
           if (payload.new.chat_room_id === selectedChatRoom?.chat_room_id) {
-            console.log(
-              "SUPABASE update for chat_rooms payload:",
-              "old:",
-              payload.old,
-              "new:",
-              payload.new
-            );
+            // console.log(
+            //   "SUPABASE update for chat_rooms payload:",
+            //   "old:",
+            //   payload.old,
+            //   "new:",
+            //   payload.new
+            // );
             setSelectedChatRoom(payload.new);
-            setChatRooms((prevChatRooms) => {
-              return prevChatRooms.map((chatRoom) => {
-                if (chatRoom.chat_room_id === payload.new.chat_room_id) {
-                  return payload.new;
-                } else {
-                  return chatRoom;
-                }
-              });
-            });
+            setChatRooms((prevChatRooms) =>
+              prevChatRooms.map((chatRoom) =>
+                chatRoom.chat_room_id === payload.new.chat_room_id
+                  ? payload.new
+                  : chatRoom
+              )
+            );
             localStorage.setItem(
               "selectedChatRoom",
               JSON.stringify(payload.new)
@@ -133,10 +140,10 @@ function ChatList({
 
   React.useEffect(() => {
     supabaseRealtimeSubscription();
-    console.log(
-      "supabaseRealtimeSubscription updated selectedChatRoom",
-      selectedChatRoom
-    );
+    // console.log(
+    //   "supabaseRealtimeSubscription updated selectedChatRoom",
+    //   selectedChatRoom
+    // );
   }, [selectedChatRoom]);
 
   return (
