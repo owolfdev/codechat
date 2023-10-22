@@ -33,23 +33,22 @@ function ChatContainer() {
   }, [isLoaded, isSignedIn, user]);
 
   return (
-    <div className="p-10 border rounded">
+    <div className="px-10 py-8 border rounded">
       {loading ? (
         <div>Loading...</div>
       ) : (
         <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <CreateChat />
+            <EditChat selectedChatRoom={selectedChatRoom} />
+            <Invite selectedChatRoom={selectedChatRoom} />
+          </div>
           <ChatList
             selectedChatRoom={selectedChatRoom}
             setSelectedChatRoom={setSelectedChatRoom}
             chatRooms={chatRooms}
             setChatRooms={setChatRooms}
           />
-
-          <div className="flex gap-4">
-            <CreateChat />
-            <EditChat selectedChatRoom={selectedChatRoom} />
-            <Invite selectedChatRoom={selectedChatRoom} />
-          </div>
         </div>
       )}
     </div>
