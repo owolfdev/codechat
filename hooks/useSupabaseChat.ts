@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
+import { log } from "console";
 
 export function useSupabaseChat() {
   //
@@ -52,8 +53,9 @@ export function useSupabaseChat() {
               await supabase
                 .from("chat_participants")
                 .select("*")
-                .eq("user_id", user.id)
-                .eq("chat_room_id", chatRoom.chat_room_id); // Assuming "chat_room_id" is the correct field name
+                .eq("user_email", user.emailAddresses[0].emailAddress)
+                .eq("chat_room_id", chatRoom.chat_room_id)
+                .eq("invitation_status", "accepted");
 
             if (participantsError) {
               console.error(participantsError);
@@ -180,22 +182,12 @@ export function useSupabaseChat() {
         const newChatRoom = chatRoomData[0] as ChatRoomData;
 
         // Step 2: Insert a record into the chat_participants table
-        const { error: participantsError } = await supabase
-          .from("chat_participants")
-          .insert([
-            {
-              user_id: user.id,
-              chat_room_id: newChatRoom.chat_room_id,
-              invitation_status: "accepted",
-              joined_at: new Date().toISOString(),
-            },
-          ]);
 
-        if (participantsError) {
-          console.error(participantsError);
-          alert("Error creating chat room participants");
-          return;
-        }
+        await addParticipantToChatRoom(
+          user.emailAddresses[0].emailAddress,
+          newChatRoom.chat_room_id,
+          "accepted"
+        );
 
         console.log("Chat room created successfully.");
         // You can add any additional logic here if needed
@@ -206,9 +198,75 @@ export function useSupabaseChat() {
     }
   };
 
+  const addParticipantToChatRoom = async (
+    user_email: string,
+    chat_room_id: string,
+    invitation_status: string
+  ) => {
+    if (isLoaded && isSignedIn) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      const { error } = await supabase.from("chat_participants").insert([
+        {
+          user_email,
+          chat_room_id,
+          invitation_status,
+          joined_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+        alert("Error adding participant to chat room");
+      } else {
+        console.log("Participant added to chat room successfully.");
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const getParticipantRecordsForUser = async (userEmail: string) => {
+    if (isLoaded && isSignedIn) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      console.log("Getting participant records for user:", userEmail);
+
+      // Use select to fetch participants
+      const { data: participantsData, error: participantsError } =
+        await supabase
+          .from("chat_participants")
+          .select("*")
+          .eq("user_email", userEmail);
+
+      if (participantsError) {
+        console.error(participantsError);
+        alert("Error fetching participants");
+        return [];
+      }
+
+      if (participantsData) {
+        // console.log("Participants found:", participantsData);
+        return participantsData;
+      } else {
+        console.log("No participants found for the user.");
+        return [];
+      }
+    }
+  };
+
   return {
     getChatRooms,
     createChatRoom,
     editChatRoomName,
+    addParticipantToChatRoom,
+    getParticipantRecordsForUser,
   };
 }

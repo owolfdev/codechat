@@ -7,6 +7,7 @@ import ChatList from "./chat-list";
 import CreateChat from "./create-chat";
 import EditChat from "./edit-chat";
 import Invite from "./invite-contacts";
+import ChatInvitations from "./chat-invitations";
 
 interface ChatRoom {
   chat_room_id: string;
@@ -42,6 +43,7 @@ function ChatContainer({ users }: { users: any }) {
             <CreateChat />
             <EditChat selectedChatRoom={selectedChatRoom} />
             <Invite selectedChatRoom={selectedChatRoom} users={users} />
+            <ChatInvitations />
           </div>
           <ChatList
             selectedChatRoom={selectedChatRoom}

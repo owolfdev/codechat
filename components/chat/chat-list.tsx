@@ -13,7 +13,6 @@ import {
 
 import { useAuth } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
-import { set } from "react-hook-form";
 
 interface ChatRoom {
   chat_room_id: string;

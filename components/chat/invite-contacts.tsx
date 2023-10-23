@@ -4,6 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 
 import Select from "react-select";
 
+import { useAuth } from "@clerk/nextjs";
+
+import { AiOutlineSend } from "react-icons/ai";
+
 // import { getAllUsers } from "@/lib/clerkUtils";
 
 import { Button } from "../ui/button";
@@ -18,7 +22,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm, useFormState } from "react-hook-form";
@@ -39,6 +44,7 @@ const formSchema = z.object({
     message: "Chat name must be at least 2 characters.",
   }),
   invite: z.string().optional(),
+  email: z.string().email(),
 });
 
 function Invite({
@@ -53,8 +59,13 @@ function Invite({
     defaultValues: {
       name: "",
       invite: "",
+      email: "",
     },
   });
+
+  const { addParticipantToChatRoom } = useSupabaseChat();
+
+  const { userId, sessionId, getToken } = useAuth();
 
   const selectRef = useRef(null);
 
@@ -64,6 +75,7 @@ function Invite({
 
   // const [users, setUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
+  const [invitee, setInvitee] = useState<any | null>(null);
 
   // useEffect(() => {
   //   const getUsers = async () => {
@@ -79,6 +91,11 @@ function Invite({
   }, [selectedUser]);
 
   useEffect(() => {
+    console.log("selectedChatRoom:", selectedChatRoom);
+    console.log("logged in user", userId);
+  }, [selectedChatRoom]);
+
+  useEffect(() => {
     console.log("users:", users);
   }, [users]);
 
@@ -90,7 +107,7 @@ function Invite({
   const handleResetDialog = () => {
     console.log("handleResetDialog");
     if (selectRef.current) {
-      setValue("invite", "");
+      setValue("email", "");
       setSelectedUser(null);
     }
   };
@@ -103,8 +120,10 @@ function Invite({
 
   const handleInviteUser = () => {
     console.log("handleInviteUser");
-    console.log(getValues("invite"));
-    console.log("selectedUser", selectedUser);
+    // console.log(getValues("email"));
+    // console.log("selectedUser", selectedUser);
+    console.log("invitee:", invitee);
+    console.log("selectedChatRoom:", selectedChatRoom.chat_room_id);
     setSelectedUser(null);
   };
 
@@ -113,7 +132,9 @@ function Invite({
       <div id="modal">
         <Dialog>
           <DialogTrigger asChild>
-            <Button onClick={handleResetDialog}>Invite</Button>
+            <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+              <AiOutlineSend size={20} />
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -129,6 +150,29 @@ function Invite({
                 onChange={handleUpdateZodState}
               >
                 <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          // value={field.value}
+                          onChange={(e) => {
+                            setInvitee(e.target.value);
+                          }}
+                          type="email"
+                          placeholder="Edit the title of your chat room"
+                          // {...field}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* <FormField
                   control={form.control}
                   name="invite"
                   render={({ field }) => (
@@ -171,12 +215,13 @@ function Invite({
                           // Allow multiple selections if needed
                           isMulti={false}
                         />
+                        
                       </FormControl>
 
                       <FormMessage />
                     </FormItem>
                   )}
-                />
+                /> */}
                 <DialogClose asChild>
                   {isValid ? (
                     <Button type="submit">Invite</Button>

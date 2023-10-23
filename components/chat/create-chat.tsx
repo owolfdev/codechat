@@ -13,7 +13,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+
+import { IoAddOutline } from "react-icons/io5";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
@@ -72,7 +73,9 @@ function CreateChat() {
       <div id="modal">
         <Dialog>
           <DialogTrigger asChild>
-            <Button onClick={handleResetDialog}>New Chat</Button>
+            <Button variant="ghost" size="sm" onClick={handleResetDialog}>
+              <IoAddOutline size={25} />
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>

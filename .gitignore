@@ -1,6 +1,9 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-NOTES.md
+NOTES_ACCOUNTS.md
+NOTES_DESIGN.md
+NOTES_INTEGRATIONS.md
+NOTES_TODO.md
 
 # dependencies
 /node_modules

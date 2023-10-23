@@ -13,6 +13,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { AiOutlineEdit } from "react-icons/ai";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
@@ -88,7 +89,9 @@ function EditChat({ selectedChatRoom }: any) {
       <div id="modal">
         <Dialog>
           <DialogTrigger asChild>
-            <Button onClick={handleResetDialog}>Edit Chat</Button>
+            <Button variant="ghost" size="sm" onClick={handleResetDialog}>
+              <AiOutlineEdit size={22} />
+            </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
