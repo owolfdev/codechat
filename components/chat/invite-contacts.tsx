@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import Select from "react-select";
 
@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormState } from "react-hook-form";
+import { set, useForm, useFormState } from "react-hook-form";
 
 import * as z from "zod";
 import {
@@ -56,6 +56,8 @@ function Invite({
     },
   });
 
+  const selectRef = useRef(null);
+
   const { control, handleSubmit, setValue, getValues } = form;
 
   const { isDirty, isValid } = useFormState({ control });
@@ -86,7 +88,11 @@ function Invite({
   };
 
   const handleResetDialog = () => {
-    form.reset();
+    console.log("handleResetDialog");
+    if (selectRef.current) {
+      setValue("invite", "");
+      setSelectedUser(null);
+    }
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -99,6 +105,7 @@ function Invite({
     console.log("handleInviteUser");
     console.log(getValues("invite"));
     console.log("selectedUser", selectedUser);
+    setSelectedUser(null);
   };
 
   return (
@@ -129,6 +136,7 @@ function Invite({
                       <FormLabel>Invite</FormLabel>
                       <FormControl>
                         <Select
+                          ref={selectRef}
                           className="text-black"
                           // Add custom styles here, similar to the example
                           styles={{}}
