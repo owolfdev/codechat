@@ -39,12 +39,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Chat name must be at least 2 characters.",
+  email: z.string().email({
+    message: "Please enter a valid email address.",
   }),
-  invite: z.string().optional(),
-  email: z.string().email(),
 });
 
 function Invite({
@@ -57,8 +62,6 @@ function Invite({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      invite: "",
       email: "",
     },
   });
@@ -76,15 +79,6 @@ function Invite({
   // const [users, setUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [invitee, setInvitee] = useState<any | null>(null);
-
-  // useEffect(() => {
-  //   const getUsers = async () => {
-  //     const users = await getAllUsers();
-  //     console.log("users from getUsers, initial load:", users);
-  //     setUsers(users);
-  //   };
-  //   getUsers();
-  // }, []);
 
   useEffect(() => {
     console.log("selectedUser:", selectedUser);
@@ -105,43 +99,64 @@ function Invite({
   };
 
   const handleResetDialog = () => {
-    console.log("handleResetDialog");
-    if (selectRef.current) {
-      setValue("email", "");
-      setSelectedUser(null);
-    }
+    form.reset();
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("onSubmit");
     // console.log(values);
     // console.log(selectedUser);
+    console.log("invitee", invitee);
   }
 
   const handleInviteUser = () => {
     console.log("handleInviteUser");
-    // console.log(getValues("email"));
-    // console.log("selectedUser", selectedUser);
-    console.log("invitee:", invitee);
-    console.log("selectedChatRoom:", selectedChatRoom.chat_room_id);
+    // console.log("invitee", invitee);
+    // console.log("selectedChatRoom", selectedChatRoom.chat_room_id);
+    addParticipantToChatRoom(
+      invitee,
+      selectedChatRoom.chat_room_id,
+      "pending",
+      userId as string
+    );
+    form.reset(); // Reset the entire form
+    setInvitee(null);
     setSelectedUser(null);
+  };
+
+  const ToolTipComponent = () => {
+    return (
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <AiOutlineSend size={20} />
+              </TooltipTrigger>
+              <TooltipContent className="mb-2">
+                <p>Send invitations</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </Button>
+      </DialogTrigger>
+    );
   };
 
   return (
     <>
       <div id="modal">
         <Dialog>
-          <DialogTrigger asChild>
-            <Button size="sm" variant="ghost" onClick={handleResetDialog}>
-              <AiOutlineSend size={20} />
-            </Button>
-          </DialogTrigger>
+          <ToolTipComponent />
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
               <DialogTitle>Invite Contacts</DialogTitle>
-              <DialogDescription>Edit the active chat room.</DialogDescription>
+              <DialogDescription>
+                Invite contact to{" "}
+                <span className="font-bold">{selectedChatRoom?.name}</span>.
+              </DialogDescription>
             </DialogHeader>
-            <div>{JSON.stringify(selectedChatRoom?.chat_room_id)}</div>
+            {/* <div>{JSON.stringify(selectedChatRoom?.chat_room_id)}</div> */}
             {/* add form here */}
             <Form {...form}>
               <form
@@ -154,17 +169,30 @@ function Invite({
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabel>Invitee email</FormLabel>
                       <FormControl>
                         <Input
-                          // value={field.value}
+                          type="email"
+                          id="email"
+                          placeholder="Email"
+                          // onChange={(e) => {
+                          //   setInvitee(e.target.value);
+                          // }}
+                          {...field}
+                          onChange={(e) => {
+                            // Access the field value as it changes
+                            field.onChange(e);
+                            setInvitee(e.target.value);
+                          }}
+                        />
+                        {/* <Input
+                          value={invitee}
                           onChange={(e) => {
                             setInvitee(e.target.value);
                           }}
-                          type="email"
-                          placeholder="Edit the title of your chat room"
+                          placeholder="Enter the email address of the invitee."
                           // {...field}
-                        />
+                        /> */}
                       </FormControl>
 
                       <FormMessage />
@@ -172,61 +200,13 @@ function Invite({
                   )}
                 />
 
-                {/* <FormField
-                  control={form.control}
-                  name="invite"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Invite</FormLabel>
-                      <FormControl>
-                        <Select
-                          ref={selectRef}
-                          className="text-black"
-                          // Add custom styles here, similar to the example
-                          styles={{}}
-                          // Options for user selection (users array)
-                          options={users?.map((user: any) => ({
-                            value: user.emailAddresses[0].emailAddress, // Set value to email address
-                            label: user.emailAddresses[0].emailAddress,
-                          }))}
-                          // Handle user selection
-                          onChange={(selectedOption) => {
-                            const selectedUser = users.find(
-                              (user: any) =>
-                                user.emailAddresses[0].emailAddress ===
-                                selectedOption?.value
-                            );
-
-                            setSelectedUser(selectedUser);
-                            // Set the value to the email address
-                            setValue("invite", selectedOption?.value || "");
-                          }}
-                          // Value for the selected user (email address)
-                          value={
-                            selectedUser
-                              ? {
-                                  value:
-                                    selectedUser.emailAddresses[0].emailAddress, // Set value to email address
-                                  label:
-                                    selectedUser.emailAddresses[0].emailAddress,
-                                }
-                              : null
-                          }
-                          // Allow multiple selections if needed
-                          isMulti={false}
-                        />
-                        
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                 <DialogClose asChild>
                   {isValid ? (
-                    <Button type="submit">Invite</Button>
-                  ) : (
                     <Button onClick={handleInviteUser} type="submit">
+                      Invite
+                    </Button>
+                  ) : (
+                    <Button disabled={true} type="submit">
                       Invite
                     </Button>
                   )}

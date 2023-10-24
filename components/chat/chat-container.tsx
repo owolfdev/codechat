@@ -43,7 +43,7 @@ function ChatContainer({ users }: { users: any }) {
             <CreateChat />
             <EditChat selectedChatRoom={selectedChatRoom} />
             <Invite selectedChatRoom={selectedChatRoom} users={users} />
-            <ChatInvitations />
+            <ChatInvitations users={users} />
           </div>
           <ChatList
             selectedChatRoom={selectedChatRoom}

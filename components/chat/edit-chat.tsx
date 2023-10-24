@@ -31,6 +31,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Chat name must be at least 2 characters.",
@@ -84,14 +91,48 @@ function EditChat({ selectedChatRoom }: any) {
     }
   }, [selectedChatRoom]);
 
+  const ToolTipComponentb = () => {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button variant="ghost" size="sm" onClick={handleResetDialog}>
+              <AiOutlineEdit size={22} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Edit current chat</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
+  const ToolTipComponent = () => {
+    return (
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <AiOutlineEdit size={22} />
+              </TooltipTrigger>
+              <TooltipContent className="mb-2">
+                <p>Edit Current Chat</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </Button>
+      </DialogTrigger>
+    );
+  };
+
   return (
     <>
       <div id="modal">
         <Dialog>
           <DialogTrigger asChild>
-            <Button variant="ghost" size="sm" onClick={handleResetDialog}>
-              <AiOutlineEdit size={22} />
-            </Button>
+            <ToolTipComponent />
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>

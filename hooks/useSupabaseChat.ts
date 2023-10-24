@@ -186,7 +186,8 @@ export function useSupabaseChat() {
         await addParticipantToChatRoom(
           user.emailAddresses[0].emailAddress,
           newChatRoom.chat_room_id,
-          "accepted"
+          "accepted",
+          user.id
         );
 
         console.log("Chat room created successfully.");
@@ -201,8 +202,13 @@ export function useSupabaseChat() {
   const addParticipantToChatRoom = async (
     user_email: string,
     chat_room_id: string,
-    invitation_status: string
+    invitation_status: string,
+    invited_by: string
   ) => {
+    console.log("Adding participant to chat room...");
+    console.log("user_email", user_email);
+    console.log("chat_room_id", chat_room_id);
+
     if (isLoaded && isSignedIn) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -210,21 +216,44 @@ export function useSupabaseChat() {
 
       const supabase = initializeSupabaseClient(supabaseAccessToken);
 
-      const { error } = await supabase.from("chat_participants").insert([
-        {
-          user_email,
-          chat_room_id,
-          invitation_status,
-          joined_at: new Date().toISOString(),
-        },
-      ]);
+      // Check if a record with the same user_email and chat_room_id already exists
+      const { data: existingRecord, error: existingRecordError } =
+        await supabase
+          .from("chat_participants")
+          .select("*")
+          .eq("user_email", user_email || "")
+          .eq("chat_room_id", chat_room_id);
 
-      if (error) {
-        console.error(error);
-        alert("Error adding participant to chat room");
+      if (existingRecordError) {
+        console.error(existingRecordError);
+        alert("Error checking for existing participant record");
+      } else if (existingRecord && existingRecord.length > 0) {
+        // Record already exists, show an alert
+        alert("This user has already been invited to the chat room.");
       } else {
-        console.log("Participant added to chat room successfully.");
-        // You can add any additional logic here if needed
+        // Record doesn't exist, insert it
+        console.log("Adding participant to chat room...");
+        console.log("user_email", user_email);
+        console.log("chat_room_id", chat_room_id);
+        console.log("invitation_status", invitation_status);
+
+        const { error } = await supabase.from("chat_participants").insert([
+          {
+            user_email,
+            chat_room_id,
+            invitation_status,
+            joined_at: new Date().toISOString(),
+            invited_by,
+          },
+        ]);
+
+        if (error) {
+          console.error(error);
+          alert("Error adding participant to chat room");
+        } else {
+          console.log("Participant added to chat room successfully.");
+          // You can add any additional logic here if needed
+        }
       }
     }
   };
@@ -244,7 +273,8 @@ export function useSupabaseChat() {
         await supabase
           .from("chat_participants")
           .select("*")
-          .eq("user_email", userEmail);
+          .eq("user_email", userEmail)
+          .eq("invitation_status", "pending");
 
       if (participantsError) {
         console.error(participantsError);
@@ -253,8 +283,33 @@ export function useSupabaseChat() {
       }
 
       if (participantsData) {
-        // console.log("Participants found:", participantsData);
-        return participantsData;
+        // Iterate through participants and fetch chat room names
+        const participantsWithChatRoomNames = await Promise.all(
+          participantsData.map(async (participant) => {
+            // Fetch the chat room name based on chat_room_id
+            const { data: chatRoomData, error: chatRoomError } = await supabase
+              .from("chat_rooms")
+              .select("name")
+              .eq("chat_room_id", participant.chat_room_id);
+
+            if (chatRoomError) {
+              console.error(chatRoomError);
+              return null;
+            }
+
+            const chatRoomName =
+              chatRoomData && chatRoomData.length > 0
+                ? chatRoomData[0].name
+                : "Chat Room Not Found"; // Handle if chat room not found
+
+            return {
+              ...participant,
+              chat_room_name: chatRoomName,
+            };
+          })
+        );
+
+        return participantsWithChatRoomNames.filter(Boolean);
       } else {
         console.log("No participants found for the user.");
         return [];

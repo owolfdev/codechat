@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 
 import { useAuth } from "@clerk/clerk-react";
+import { useUser } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 
 interface ChatRoom {
@@ -31,18 +32,19 @@ function ChatList({
   setChatRooms: React.Dispatch<React.SetStateAction<ChatRoom[]>>;
 }) {
   const { getToken } = useAuth();
+  const { user } = useUser();
 
   React.useEffect(() => {
-    const storedChatRoom = localStorage.getItem("selectedChatRoom");
+    const storedChatRoom = localStorage.getItem(`selectedChatRoom_${user?.id}`);
     if (storedChatRoom) {
       setSelectedChatRoom(JSON.parse(storedChatRoom));
     }
-  }, []);
+  }, [user?.id]);
 
   const handleChatRoomSelect = (room: ChatRoom) => {
     // console.log("update", room);
     setSelectedChatRoom(room);
-    localStorage.setItem("selectedChatRoom", JSON.stringify(room));
+    localStorage.setItem(`selectedChatRoom_${user?.id}`, JSON.stringify(room));
   };
 
   const supabaseRealtimeSubscription = async () => {
@@ -93,9 +95,14 @@ function ChatList({
             //   payload.new
             // );
             localStorage.setItem(
-              "selectedChatRoom",
+              `selectedChatRoom_${user?.id}`,
               JSON.stringify(payload.new)
             );
+
+            // localStorage.setItem(
+            //   "selectedChatRoom",
+            //   JSON.stringify(payload.new)
+            // );
           }
         }
       )
@@ -123,8 +130,9 @@ function ChatList({
                   : chatRoom
               )
             );
+
             localStorage.setItem(
-              "selectedChatRoom",
+              `selectedChatRoom_${user?.id}`,
               JSON.stringify(payload.new)
             );
           }
