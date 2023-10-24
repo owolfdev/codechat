@@ -121,7 +121,7 @@ function ChatInvitations({ users }: { users: any }) {
             const invitedByName = getFullNameById(users, invitation.invited_by);
 
             return (
-              <div>
+              <div key={invitation.participant_id}>
                 <div>{invitation.chat_room_name}</div>{" "}
                 <div>
                   invited by:
