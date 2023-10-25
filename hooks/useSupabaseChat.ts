@@ -317,11 +317,56 @@ export function useSupabaseChat() {
     }
   };
 
+  const changeParticipantStatus = async (
+    invitation_status: string,
+    participant_id: string
+  ) => {
+    if (isLoaded && isSignedIn && user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Check if the provided participant_id exists in the chat_participants table
+      const { data: existingParticipant, error: existingParticipantError } =
+        await supabase
+          .from("chat_participants")
+          .select("*")
+          .eq("participant_id", participant_id);
+
+      if (existingParticipantError) {
+        console.error(existingParticipantError);
+        alert("Error checking for existing participant record");
+        return;
+      }
+
+      if (existingParticipant && existingParticipant.length > 0) {
+        // Update the invitation_status for the provided participant_id
+        const { error } = await supabase
+          .from("chat_participants")
+          .update({ invitation_status: invitation_status })
+          .eq("participant_id", participant_id);
+
+        if (error) {
+          console.error(error);
+          alert("Error changing participant status");
+        } else {
+          console.log("Participant status changed successfully.");
+          // You can add any additional logic here if needed
+        }
+      } else {
+        alert("Participant not found");
+      }
+    }
+  };
+
   return {
     getChatRooms,
     createChatRoom,
     editChatRoomName,
     addParticipantToChatRoom,
     getParticipantRecordsForUser,
+    changeParticipantStatus,
   };
 }

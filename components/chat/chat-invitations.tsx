@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/tooltip";
 
 import { getUserById } from "@/lib/clerkUtils"; // Import the function
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 
 import {
   Form,
@@ -36,10 +38,13 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 function ChatInvitations({ users }: { users: any }) {
   const { userId, sessionId, getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
-  const { getParticipantRecordsForUser } = useSupabaseChat();
+  const { getParticipantRecordsForUser, changeParticipantStatus } =
+    useSupabaseChat();
   const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
   const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
 
@@ -77,6 +82,10 @@ function ChatInvitations({ users }: { users: any }) {
     return "Unknown User";
   };
 
+  const handleCheckChange = (event: any) => {
+    console.log("handleCheckChange", event);
+  };
+
   const ToolTipComponent = () => {
     return (
       <DialogTrigger asChild>
@@ -105,7 +114,7 @@ function ChatInvitations({ users }: { users: any }) {
     <Dialog>
       <ToolTipComponent />
 
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
         <DialogHeader>
           <DialogTitle>Pending Invitations</DialogTitle>
           <DialogDescription>
@@ -115,24 +124,97 @@ function ChatInvitations({ users }: { users: any }) {
         <div className="grid gap-4 py-4">
           {filteredInvitations.map((invitation) => {
             console.log("invitation.invited_by:", invitation.invited_by);
-            // const invitedByName = users?.find(
-            //   (user: any) => user.user_id === invitation.invited_by
-            // );
             const invitedByName = getFullNameById(users, invitation.invited_by);
-
             return (
-              <div key={invitation.participant_id}>
-                <div>{invitation.chat_room_name}</div>{" "}
-                <div>
-                  invited by:
-                  {invitedByName}
+              <div
+                key={invitation.participant_id}
+                className="border rounded px-4 py-2 flex flex-col "
+              >
+                <div>{invitation.chat_room_name}</div>
+                <div>invited by: {invitedByName}</div>
+                <div className="flex gap-4 mt-2 mb-2">
+                  <RadioGroup
+                    defaultValue="pending"
+                    onValueChange={(value) => {
+                      console.log("onValueChange", value);
+                      changeParticipantStatus(
+                        value as string,
+                        invitation.participant_id
+                      );
+                    }}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="pending" id="r1" />
+                      <Label htmlFor="r1">Pending</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="accepted" id="r2" />
+                      <Label htmlFor="r2">Accepted</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="rejected" id="r3" />
+                      <Label htmlFor="r3">Rejected</Label>
+                    </div>
+                  </RadioGroup>
+                  {/* <div className="flex items-center space-x-2">
+                    <Checkbox
+                      name="accept"
+                      id={invitation.participant_id + "_accept"}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          changeParticipantStatus(
+                            "accepted",
+                            invitation.participant_id
+                          );
+                        } else {
+                          changeParticipantStatus(
+                            "pending",
+                            invitation.participant_id
+                          );
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="accept"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Accept
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      name="reject"
+                      id={invitation.participant_id + "_reject"}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          changeParticipantStatus(
+                            "rejected",
+                            invitation.participant_id
+                          );
+                        } else {
+                          changeParticipantStatus(
+                            "pending",
+                            invitation.participant_id
+                          );
+                        }
+                      }}
+                    />
+                    <label
+                      htmlFor="reject"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Reject
+                    </label>
+                  </div> */}
                 </div>
               </div>
             );
           })}
         </div>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <DialogClose asChild>
+            <Button>Confirm</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -101,7 +101,7 @@ function CreateChat() {
           {/* <DialogTrigger asChild> */}
           <ToolTipComponent />
           {/* </DialogTrigger> */}
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
               <DialogTitle>Create New Chat</DialogTitle>
               <DialogDescription>Create a new chat room.</DialogDescription>

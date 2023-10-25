@@ -39,7 +39,7 @@ function ChatContainer({ users }: { users: any }) {
         <div>Loading...</div>
       ) : (
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4">
+          <div id="admin" className="flex gap-4">
             <CreateChat />
             <EditChat selectedChatRoom={selectedChatRoom} />
             <Invite selectedChatRoom={selectedChatRoom} users={users} />

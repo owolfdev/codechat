@@ -134,7 +134,7 @@ function EditChat({ selectedChatRoom }: any) {
           <DialogTrigger asChild>
             <ToolTipComponent />
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
               <DialogTitle>Edit Chat</DialogTitle>
               <DialogDescription>Edit the active chat room.</DialogDescription>

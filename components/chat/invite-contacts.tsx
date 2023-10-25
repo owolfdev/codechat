@@ -148,7 +148,7 @@ function Invite({
       <div id="modal">
         <Dialog>
           <ToolTipComponent />
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
               <DialogTitle>Invite Contacts</DialogTitle>
               <DialogDescription>
@@ -175,9 +175,6 @@ function Invite({
                           type="email"
                           id="email"
                           placeholder="Email"
-                          // onChange={(e) => {
-                          //   setInvitee(e.target.value);
-                          // }}
                           {...field}
                           onChange={(e) => {
                             // Access the field value as it changes
@@ -185,16 +182,7 @@ function Invite({
                             setInvitee(e.target.value);
                           }}
                         />
-                        {/* <Input
-                          value={invitee}
-                          onChange={(e) => {
-                            setInvitee(e.target.value);
-                          }}
-                          placeholder="Enter the email address of the invitee."
-                          // {...field}
-                        /> */}
                       </FormControl>
-
                       <FormMessage />
                     </FormItem>
                   )}
