@@ -8,6 +8,7 @@ import CreateChat from "./create-chat";
 import EditChat from "./edit-chat";
 import Invite from "./invite-contacts";
 import ChatInvitations from "./chat-invitations";
+import LeaveChat from "./leave-chat";
 
 interface ChatRoom {
   chat_room_id: string;
@@ -34,23 +35,30 @@ function ChatContainer({ users }: { users: any }) {
   }, [isLoaded, isSignedIn, user]);
 
   return (
-    <div className="px-10 py-8 border rounded">
+    <div className="px-10 py-8 border rounded w-full max-w-screen-md">
       {loading ? (
         <div>Loading...</div>
       ) : (
         <div className="flex flex-col gap-4">
-          <div id="admin" className="flex gap-4">
-            <CreateChat />
-            <EditChat selectedChatRoom={selectedChatRoom} />
-            <Invite selectedChatRoom={selectedChatRoom} users={users} />
-            <ChatInvitations users={users} />
+          <div className="flex justify-between">
+            <div id="admin" className="flex gap-4">
+              <CreateChat />
+              <EditChat selectedChatRoom={selectedChatRoom} />
+              <Invite selectedChatRoom={selectedChatRoom} users={users} />
+            </div>
+            <div id="user" className="flex gap-4">
+              <ChatInvitations users={users} />
+              <LeaveChat selectedChatRoom={selectedChatRoom} />
+            </div>
           </div>
-          <ChatList
-            selectedChatRoom={selectedChatRoom}
-            setSelectedChatRoom={setSelectedChatRoom}
-            chatRooms={chatRooms}
-            setChatRooms={setChatRooms}
-          />
+          <div className="flex w-full">
+            <ChatList
+              selectedChatRoom={selectedChatRoom}
+              setSelectedChatRoom={setSelectedChatRoom}
+              chatRooms={chatRooms}
+              setChatRooms={setChatRooms}
+            />
+          </div>
         </div>
       )}
     </div>

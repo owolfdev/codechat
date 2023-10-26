@@ -89,23 +89,23 @@ function ChatInvitations({ users }: { users: any }) {
   const ToolTipComponent = () => {
     return (
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" onClick={handleResetDialog}>
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger>
-                {filteredInvitations.length > 0 && (
+        {filteredInvitations.length > 0 && (
+          <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
                   <div className="flex gap-2 items-center">
                     <MdOutlineMarkEmailUnread className="transform scale-150" />
                     {filteredInvitations.length}
                   </div>
-                )}
-              </TooltipTrigger>
-              <TooltipContent className="mb-2">
-                <p>Manage pending invitations</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </Button>
+                </TooltipTrigger>
+                <TooltipContent className="mb-2">
+                  <p>Manage pending invitations</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Button>
+        )}
       </DialogTrigger>
     );
   };
@@ -113,7 +113,6 @@ function ChatInvitations({ users }: { users: any }) {
   return (
     <Dialog>
       <ToolTipComponent />
-
       <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
         <DialogHeader>
           <DialogTitle>Pending Invitations</DialogTitle>
@@ -156,56 +155,6 @@ function ChatInvitations({ users }: { users: any }) {
                       <Label htmlFor="r3">Rejected</Label>
                     </div>
                   </RadioGroup>
-                  {/* <div className="flex items-center space-x-2">
-                    <Checkbox
-                      name="accept"
-                      id={invitation.participant_id + "_accept"}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          changeParticipantStatus(
-                            "accepted",
-                            invitation.participant_id
-                          );
-                        } else {
-                          changeParticipantStatus(
-                            "pending",
-                            invitation.participant_id
-                          );
-                        }
-                      }}
-                    />
-                    <label
-                      htmlFor="accept"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Accept
-                    </label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      name="reject"
-                      id={invitation.participant_id + "_reject"}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          changeParticipantStatus(
-                            "rejected",
-                            invitation.participant_id
-                          );
-                        } else {
-                          changeParticipantStatus(
-                            "pending",
-                            invitation.participant_id
-                          );
-                        }
-                      }}
-                    />
-                    <label
-                      htmlFor="reject"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Reject
-                    </label>
-                  </div> */}
                 </div>
               </div>
             );

@@ -273,8 +273,7 @@ export function useSupabaseChat() {
         await supabase
           .from("chat_participants")
           .select("*")
-          .eq("user_email", userEmail)
-          .eq("invitation_status", "pending");
+          .eq("user_email", userEmail);
 
       if (participantsError) {
         console.error(participantsError);

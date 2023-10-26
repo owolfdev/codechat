@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { AiOutlineEdit } from "react-icons/ai";
+import { MdOutlineCancel } from "react-icons/md";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
@@ -38,6 +39,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
+
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "Chat name must be at least 2 characters.",
@@ -45,59 +49,47 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-function EditChat({ selectedChatRoom }: any) {
-  const { editChatRoomName } = useSupabaseChat();
+function LeaveChat({ selectedChatRoom }: any) {
+  const {
+    editChatRoomName,
+    changeParticipantStatus,
+    getParticipantRecordsForUser,
+  } = useSupabaseChat();
   const dialogRef = useRef<HTMLElement | null>(null);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: selectedChatRoom?.name || "hi mom",
-      description: selectedChatRoom?.description || "hi dad",
-    },
-  });
+  const { userId, sessionId, getToken } = useAuth();
+  const { isLoaded, isSignedIn, user } = useUser();
 
-  const { control } = form;
-
-  const { isDirty, isValid } = useFormState({ control });
-
-  const handleUpdateZodState = () => {
-    // console.log("handleUpdateZodState");
-    form.trigger();
-  };
-
-  const handleResetDialog = () => {
-    form.reset();
-    if (selectedChatRoom) {
-      // console.log("selectedChatRoom from edit chat:", selectedChatRoom);
-      form.setValue("name", selectedChatRoom?.name);
-      form.setValue("description", selectedChatRoom?.description);
-    }
-  };
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values);
-    editChatRoomName(
-      selectedChatRoom?.chat_room_id,
-      values.name,
-      values.description
-    );
-  }
+  const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
+  const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
 
   useEffect(() => {
-    if (selectedChatRoom) {
-      // console.log("selectedChatRoom from edit chat:", selectedChatRoom);
-      form.setValue("name", selectedChatRoom?.name);
-      form.setValue("description", selectedChatRoom?.description);
+    const fetchInvitations = async () => {
+      const participants = await getParticipantRecordsForUser(
+        user?.emailAddresses[0].emailAddress as string
+      );
+
+      console.log("participants from leave chat:", participants);
+      setAllInvitations(participants!);
+      const filteredInvites =
+        participants?.filter((participant: any) => {
+          return participant.chat_room_id === selectedChatRoom?.chat_room_id;
+        }) || [];
+      setFilteredInvitations(filteredInvites);
+    };
+    if (user) {
+      fetchInvitations();
     }
-  }, [selectedChatRoom]);
+  }, [user, selectedChatRoom]);
+
+  useEffect(() => {
+    console.log("allInvitations:", allInvitations);
+    console.log("filteredInvitations:", filteredInvitations);
+  }, [allInvitations, filteredInvitations]);
 
   const handleLeaveChat = (e: any) => {
-    e.preventDefault();
     console.log("handleLeaveChat");
-    if (dialogRef.current) {
-      handleCloseDialog();
-    }
+    changeParticipantStatus("left", filteredInvitations[0].participant_id);
   };
 
   const handleCloseDialog = () => {
@@ -110,14 +102,14 @@ function EditChat({ selectedChatRoom }: any) {
   const ToolTipComponent = () => {
     return (
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+        <Button size="sm" variant="ghost">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <AiOutlineEdit size={22} />
+                <MdOutlineCancel size={22} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Edit Current Chat</p>
+                <p>Leave chat</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -135,12 +127,14 @@ function EditChat({ selectedChatRoom }: any) {
           </DialogTrigger>
           <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
-              <DialogTitle>Edit Chat</DialogTitle>
-              <DialogDescription>Edit the active chat room.</DialogDescription>
+              <DialogTitle>Leave Chat</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to leave this chat?
+              </DialogDescription>
             </DialogHeader>
 
             {/* add form here */}
-            <Form {...form}>
+            {/* <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
@@ -187,7 +181,15 @@ function EditChat({ selectedChatRoom }: any) {
                 </div>
               </form>
             </Form>
-            {/* end form */}
+            end form */}
+            <div className="flex gap-4">
+              <DialogClose asChild>
+                <Button onClick={handleLeaveChat}>Leave Chat</Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button variant="destructive">Cancel</Button>
+              </DialogClose>
+            </div>
             <DialogFooter></DialogFooter>
           </DialogContent>
         </Dialog>
@@ -196,4 +198,4 @@ function EditChat({ selectedChatRoom }: any) {
   );
 }
 
-export default EditChat;
+export default LeaveChat;

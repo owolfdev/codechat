@@ -163,7 +163,7 @@ function ChatList({
         }
       }}
     >
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="">
         <SelectValue placeholder="Select a chat">
           {selectedChatRoom ? selectedChatRoom.name : ""}
         </SelectValue>
