@@ -116,7 +116,7 @@ function ChatList({
         (payload: any) => {
           if (payload.new.chat_room_id === selectedChatRoom?.chat_room_id) {
             // console.log(
-            //   "SUPABASE update for chat_rooms payload:",
+            //   "SUPABASE UPDATE for chat_rooms payload:",
             //   "old:",
             //   payload.old,
             //   "new:",

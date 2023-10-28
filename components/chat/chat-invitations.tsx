@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { useUser } from "@clerk/nextjs";
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
@@ -13,19 +13,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { getUserById } from "@/lib/clerkUtils"; // Import the function
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
 
 import {
   Dialog,
@@ -38,7 +27,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-import { Checkbox } from "@/components/ui/checkbox";
+import { initializeSupabaseClient } from "@/lib/supabaseClient";
 
 function ChatInvitations({ users }: { users: any }) {
   const { userId, sessionId, getToken } = useAuth();
@@ -48,31 +37,44 @@ function ChatInvitations({ users }: { users: any }) {
   const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
   const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
 
+  const supbaseRealtimeSubscription = async () => {
+    const supabaseAccessToken = await getToken({
+      template: "supabase-codechat",
+    });
+
+    const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+    supabase
+      .channel("invitations_for_user")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "chat_participants" },
+        fetchInvitations
+      )
+      .subscribe();
+  };
+
   useEffect(() => {
-    const fetchInvitations = async () => {
-      const participants = await getParticipantRecordsForUser(
-        user?.emailAddresses[0].emailAddress as string
-      );
+    supbaseRealtimeSubscription();
+  }, []);
 
-      console.log("participants:", participants);
-      setAllInvitations(participants!);
-      const filteredInvites =
-        participants?.filter((participant: any) => {
-          return participant.invitation_status === "pending";
-        }) || []; // Use an empty array as a fallback if participants is undefined
-      setFilteredInvitations(filteredInvites);
-    };
+  const fetchInvitations = async () => {
+    const participants = await getParticipantRecordsForUser(
+      user?.emailAddresses[0].emailAddress as string
+    );
 
+    // console.log("participants:", participants);
+    setAllInvitations(participants!);
+    const filteredInvites =
+      participants?.filter((participant: any) => {
+        return participant.invitation_status === "pending";
+      }) || []; // Use an empty array as a fallback if participants is undefined
+    setFilteredInvitations(filteredInvites);
+  };
+
+  useEffect(() => {
     fetchInvitations();
   }, [userId]);
-
-  const handleResetDialog = () => {
-    console.log("handleResetDialog");
-    // if (selectRef.current) {
-    //   setValue("email", "");
-    //   setSelectedUser(null);
-    // }
-  };
 
   const getFullNameById = (users: any, userId: string) => {
     const user = users.find((user: any) => user.id === userId);
@@ -82,15 +84,30 @@ function ChatInvitations({ users }: { users: any }) {
     return "Unknown User";
   };
 
-  const handleCheckChange = (event: any) => {
-    console.log("handleCheckChange", event);
-  };
+  // const handleChangeParticipantStatus =
+  //   (status: string, participantId: string) => async () => {
+  //     console.log("handleChangeParticipantStatus", status, participantId);
+  //     const response = await changeParticipantStatus(status, participantId);
+  //     console.log("response:", response);
+  //     fetchInvitations();
+  //   };
+
+  function handleChangeParticipantStatus(
+    status: string,
+    participantId: string
+  ) {
+    console.log("handleChangeParticipantStatus", status, participantId);
+    changeParticipantStatus(status, participantId).then((response) => {
+      console.log("response:", response);
+      // fetchInvitations();
+    });
+  }
 
   const ToolTipComponent = () => {
     return (
       <DialogTrigger asChild>
         {filteredInvitations.length > 0 && (
-          <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+          <Button size="sm" variant="ghost">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
@@ -120,6 +137,11 @@ function ChatInvitations({ users }: { users: any }) {
             Accept or reject invitations to join chats.
           </DialogDescription>
         </DialogHeader>
+        {filteredInvitations.length === 0 && (
+          <div className="text-center py-4">
+            <p>No pending invitations. Press confirm to exit this dialog.</p>
+          </div>
+        )}
         <div className="grid gap-4 py-4">
           {filteredInvitations.map((invitation) => {
             console.log("invitation.invited_by:", invitation.invited_by);
@@ -136,7 +158,7 @@ function ChatInvitations({ users }: { users: any }) {
                     defaultValue="pending"
                     onValueChange={(value) => {
                       console.log("onValueChange", value);
-                      changeParticipantStatus(
+                      handleChangeParticipantStatus(
                         value as string,
                         invitation.participant_id
                       );

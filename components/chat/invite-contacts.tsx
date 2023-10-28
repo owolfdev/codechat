@@ -81,20 +81,20 @@ function Invite({
   const [invitee, setInvitee] = useState<any | null>(null);
 
   useEffect(() => {
-    console.log("selectedUser:", selectedUser);
+    // console.log("selectedUser:", selectedUser);
   }, [selectedUser]);
 
   useEffect(() => {
-    console.log("selectedChatRoom:", selectedChatRoom);
-    console.log("logged in user", userId);
+    // console.log("selectedChatRoom:", selectedChatRoom);
+    // console.log("logged in user", userId);
   }, [selectedChatRoom]);
 
   useEffect(() => {
-    console.log("users:", users);
+    // console.log("users:", users);
   }, [users]);
 
   const handleUpdateZodState = () => {
-    console.log("handleUpdateZodState");
+    // console.log("handleUpdateZodState");
     form.trigger();
   };
 
@@ -103,14 +103,14 @@ function Invite({
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("onSubmit");
+    // console.log("onSubmit");
     // console.log(values);
     // console.log(selectedUser);
-    console.log("invitee", invitee);
+    // console.log("invitee", invitee);
   }
 
   const handleInviteUser = () => {
-    console.log("handleInviteUser");
+    // console.log("handleInviteUser");
     // console.log("invitee", invitee);
     // console.log("selectedChatRoom", selectedChatRoom.chat_room_id);
     addParticipantToChatRoom(

@@ -69,7 +69,7 @@ function LeaveChat({ selectedChatRoom }: any) {
         user?.emailAddresses[0].emailAddress as string
       );
 
-      console.log("participants from leave chat:", participants);
+      // console.log("participants from leave chat:", participants);
       setAllInvitations(participants!);
       const filteredInvites =
         participants?.filter((participant: any) => {
@@ -83,12 +83,12 @@ function LeaveChat({ selectedChatRoom }: any) {
   }, [user, selectedChatRoom]);
 
   useEffect(() => {
-    console.log("allInvitations:", allInvitations);
-    console.log("filteredInvitations:", filteredInvitations);
+    // console.log("allInvitations:", allInvitations);
+    // console.log("filteredInvitations:", filteredInvitations);
   }, [allInvitations, filteredInvitations]);
 
   const handleLeaveChat = (e: any) => {
-    console.log("handleLeaveChat");
+    // console.log("handleLeaveChat");
     changeParticipantStatus("left", filteredInvitations[0].participant_id);
   };
 

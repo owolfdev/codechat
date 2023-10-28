@@ -9,11 +9,10 @@ export function useSupabaseChat() {
   //
   const { isLoaded, isSignedIn, user } = useUser();
   const { getToken } = useAuth();
-  const [defaultChatRoomExists, setDefaultChatRoomExists] = useState(false);
 
   const getChatRooms = async () => {
     console.log("Getting chat rooms...");
-    await checkDefaultChatRoomExists();
+    const defaultChatRoomExists = await checkDefaultChatRoomExists();
 
     // Rest of your code
     if (defaultChatRoomExists) {
@@ -21,17 +20,33 @@ export function useSupabaseChat() {
       // Add the code you want to run after the chat room exists here
     }
     // After the default chat room code is run, call getChatRoomList
-    const data = await getChatRoomList();
+    const data = await getChatRoomList(user);
     return data;
   };
 
-  const getChatRoomList = async () => {
-    if (isLoaded && isSignedIn && user) {
+  const getChatRoomsForUpdate = async () => {
+    console.log("Getting chat rooms for UPDATE...");
+
+    // After the default chat room code is run, call getChatRoomList
+    const data = await getChatRoomList(user);
+    console.log("data for getChatRoomsForUpdate", data);
+    return data;
+  };
+
+  const getChatRoomList = async (user: any) => {
+    console.log("Getting chat room list... heres the user", user);
+    if (user) {
+      console.log(
+        "Getting chat room list for user!!!!!!!!!:",
+        user.emailAddresses[0]
+      );
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
 
       const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      console.log("supabase here from get chat room list", supabase);
 
       // Use select to fetch chat rooms
       const { data: chatRoomsData, error: chatRoomsError } = await supabase
@@ -83,7 +98,7 @@ export function useSupabaseChat() {
   };
 
   const checkDefaultChatRoomExists = async () => {
-    if (isLoaded && isSignedIn && user) {
+    if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
@@ -97,7 +112,8 @@ export function useSupabaseChat() {
 
       if (data && data.length > 0) {
         console.log("This user has a chat room.");
-        setDefaultChatRoomExists(true); // Set the flag to true if a chat room exists
+        // setDefaultChatRoomExists(true); // Set the flag to true if a chat room exists
+        return true;
       } else if (error) {
         console.error(error);
       } else {
@@ -116,7 +132,7 @@ export function useSupabaseChat() {
     newName: string,
     description: string
   ) => {
-    if (isLoaded && isSignedIn && user) {
+    if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
@@ -205,11 +221,11 @@ export function useSupabaseChat() {
     invitation_status: string,
     invited_by: string
   ) => {
-    console.log("Adding participant to chat room...");
-    console.log("user_email", user_email);
-    console.log("chat_room_id", chat_room_id);
+    // console.log("Adding participant to chat room...");
+    // console.log("user_email", user_email);
+    // console.log("chat_room_id", chat_room_id);
 
-    if (isLoaded && isSignedIn) {
+    if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
@@ -232,10 +248,10 @@ export function useSupabaseChat() {
         alert("This user has already been invited to the chat room.");
       } else {
         // Record doesn't exist, insert it
-        console.log("Adding participant to chat room...");
-        console.log("user_email", user_email);
-        console.log("chat_room_id", chat_room_id);
-        console.log("invitation_status", invitation_status);
+        // console.log("Adding participant to chat room...");
+        // console.log("user_email", user_email);
+        // console.log("chat_room_id", chat_room_id);
+        // console.log("invitation_status", invitation_status);
 
         const { error } = await supabase.from("chat_participants").insert([
           {
@@ -259,7 +275,7 @@ export function useSupabaseChat() {
   };
 
   const getParticipantRecordsForUser = async (userEmail: string) => {
-    if (isLoaded && isSignedIn) {
+    if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
@@ -320,7 +336,7 @@ export function useSupabaseChat() {
     invitation_status: string,
     participant_id: string
   ) => {
-    if (isLoaded && isSignedIn && user) {
+    if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
@@ -362,6 +378,7 @@ export function useSupabaseChat() {
 
   return {
     getChatRooms,
+    getChatRoomsForUpdate,
     createChatRoom,
     editChatRoomName,
     addParticipantToChatRoom,
