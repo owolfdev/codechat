@@ -102,7 +102,7 @@ function CreateChat() {
                 <IoAddOutline size={25} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Create new chat</p>
+                <div>Create new chat</div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -164,15 +164,20 @@ function CreateChat() {
                     </FormItem>
                   )}
                 />
-                <DialogClose asChild>
-                  {isValid ? (
-                    <Button type="submit">Create Chat</Button>
-                  ) : (
-                    <Button disabled={true} type="submit">
-                      Create Chat
-                    </Button>
-                  )}
-                </DialogClose>
+                <div className="flex gap-4">
+                  <DialogClose asChild>
+                    {isValid ? (
+                      <Button type="submit">Create Chat</Button>
+                    ) : (
+                      <Button disabled={true} type="submit">
+                        Create Chat
+                      </Button>
+                    )}
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="destructive">Cancel</Button>
+                  </DialogClose>
+                </div>
               </form>
             </Form>
             {/* end form */}

@@ -1,6 +1,5 @@
 import ChatContainer from "@/components/chat/chat-container";
-
-import { getAllUsers, getCurrentUser } from "@/lib/clerkUtils";
+import { getAllUsers, getCurrentUser, getUserById } from "@/lib/clerkUtils";
 
 export default async function Home() {
   const usersData = await getAllUsers();
@@ -28,6 +27,12 @@ export default async function Home() {
         <div className="flex flex-col gap-2">
           <ChatContainer users={users} currentUser={currentUser} />
         </div>
+        {/* <div>
+          {users.map((user) => {
+            return <div key={user.id}>{user.id}</div>;
+          })}
+        </div>
+        <div>{currentUser.id}</div> */}
       </div>
     </div>
   );

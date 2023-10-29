@@ -117,7 +117,7 @@ function LeaveChat({ selectedChatRoom }: any) {
                 <MdOutlineCancel size={22} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Leave chat</p>
+                <div>Leave chat</div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -136,61 +136,13 @@ function LeaveChat({ selectedChatRoom }: any) {
           <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
               <DialogTitle>Leave Chat</DialogTitle>
-              <DialogDescription>
-                Are you sure you want to leave{" "}
-                <span className="font-bold">{selectedChatRoom?.name}</span>?
-              </DialogDescription>
+              <DialogDescription>{`Click "Leave Chat" to leave the chat, else cancel.`}</DialogDescription>
             </DialogHeader>
+            <div>
+              Are you sure you want to leave{" "}
+              <span className="font-bold">{selectedChatRoom?.name}</span>?
+            </div>
 
-            {/* add form here */}
-            {/* <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-                onChange={handleUpdateZodState}
-              >
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Edit the title of your chat room"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Edit the description of your chat room"
-                          {...field}
-                        />
-                      </FormControl>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <div className="flex gap-4">
-                  <DialogClose asChild>
-                    <Button type="submit">Edit Chat</Button>
-                  </DialogClose>
-                </div>
-              </form>
-            </Form>
-            end form */}
             <div className="flex gap-4">
               <DialogClose asChild>
                 <Button

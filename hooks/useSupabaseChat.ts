@@ -249,14 +249,23 @@ export function useSupabaseChat() {
         console.error(existingRecordError);
         alert("Error checking for existing participant record");
       } else if (existingRecord && existingRecord.length > 0) {
-        // Record already exists, update the invitation_status to 'pending'
+        // Record already exists, check the invitation_status
         const existingParticipant = existingRecord[0]; // Assuming there's only one record
 
+        if (existingParticipant.invitation_status === "accepted") {
+          alert("Invitation already accepted.");
+          return;
+        } else if (existingParticipant.invitation_status === "rejected") {
+          alert("Invitation already rejected.");
+          return;
+        }
+
+        // If invitation_status is not accepted or rejected, update it to 'pending'
         const { error: updateError } = await supabase
           .from("chat_participants")
           .update({ invitation_status: "pending" })
           .eq("user_email", existingParticipant.user_email)
-          .eq("chat_room_id", existingParticipant.chat_room_id); // Add this condition
+          .eq("chat_room_id", existingParticipant.chat_room_id);
 
         if (updateError) {
           console.error(updateError);
@@ -280,8 +289,10 @@ export function useSupabaseChat() {
         if (error) {
           console.error(error);
           alert("Error adding participant to chat room");
+          return false;
         } else {
           console.log("Participant added to chat room successfully.");
+          return true;
           // You can add any additional logic here if needed
         }
       }

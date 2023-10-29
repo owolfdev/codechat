@@ -80,12 +80,24 @@ function ChatInvitations({ users }: { users: any }) {
     fetchInvitations();
   }, [userId]);
 
-  const getFullNameById = (users: any, userId: string) => {
-    const user = users.find((user: any) => user.id === userId);
-    if (user) {
-      return `${user.firstName} ${user.lastName}`;
-    }
-    return "Unknown User";
+  const getFullNameById = async (userId: string) => {
+    const response = await fetch("/api/get-user-by-id", {
+      method: "POST",
+      body: JSON.stringify({ id: userId }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("response", response);
+
+    const data = await response.json();
+
+    console.log("data", data.data.firstName);
+
+    const fullName = data.data.firstName + " " + data.data.lastName;
+
+    return fullName;
   };
 
   // const handleChangeParticipantStatus =
@@ -126,7 +138,7 @@ function ChatInvitations({ users }: { users: any }) {
                   </div>
                 </TooltipTrigger>
                 <TooltipContent className="mb-2">
-                  <p>Manage pending invitations</p>
+                  <div>Manage pending invitations</div>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -148,20 +160,22 @@ function ChatInvitations({ users }: { users: any }) {
         </DialogHeader>
         {filteredInvitations.length === 0 && (
           <div className="text-center py-4">
-            <p>No pending invitations. Press confirm to exit this dialog.</p>
+            <div className="text-orange-600">
+              No pending invitations. Press confirm to exit this dialog.
+            </div>
           </div>
         )}
         <div className="grid gap-4 py-4">
           {filteredInvitations.map((invitation) => {
             console.log("invitation.invited_by:", invitation.invited_by);
-            const invitedByName = getFullNameById(users, invitation.invited_by);
+            const invitedByName = getFullNameById(invitation.invited_by);
             return (
               <div
                 key={invitation.participant_id}
                 className="border rounded px-4 py-2 flex flex-col "
               >
-                <div>{invitation.chat_room_name}</div>
-                <div>invited by: {invitedByName}</div>
+                <div>Chat title: {invitation.chat_room_name}</div>
+                <div>Invited by: {invitedByName}</div>
                 <div className="flex gap-4 mt-2 mb-2">
                   <RadioGroup
                     defaultValue="pending"
@@ -194,7 +208,7 @@ function ChatInvitations({ users }: { users: any }) {
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Confirm</Button>
+            <Button>Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

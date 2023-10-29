@@ -122,14 +122,17 @@ function Invite({
       selectedChatRoom.chat_room_id,
       "pending",
       userId as string
-    );
+    ).then((res) => {
+      if (res) {
+        toast({
+          title: "User invited.",
+          description: `"${invitee}" was invited successfully to "${selectedChatRoom.name}".`,
+        });
+      }
+    });
     form.reset(); // Reset the entire form
     setInvitee(null);
     setSelectedUser(null);
-    toast({
-      title: "User invited.",
-      description: `"${invitee}" was invited successfully to "${selectedChatRoom.name}".`,
-    });
   };
 
   const ToolTipComponent = () => {
@@ -142,7 +145,7 @@ function Invite({
                 <AiOutlineSend size={20} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Send invitations</p>
+                <div>Send invitations</div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -195,18 +198,22 @@ function Invite({
                     </FormItem>
                   )}
                 />
-
-                <DialogClose asChild>
-                  {isValid ? (
-                    <Button onClick={handleInviteUser} type="submit">
-                      Invite
-                    </Button>
-                  ) : (
-                    <Button disabled={true} type="submit">
-                      Invite
-                    </Button>
-                  )}
-                </DialogClose>
+                <div className="flex gap-4">
+                  <DialogClose asChild>
+                    {isValid ? (
+                      <Button onClick={handleInviteUser} type="submit">
+                        Invite
+                      </Button>
+                    ) : (
+                      <Button disabled={true} type="submit">
+                        Invite
+                      </Button>
+                    )}
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="destructive">Cancel</Button>
+                  </DialogClose>
+                </div>
               </form>
             </Form>
             {/* end form */}

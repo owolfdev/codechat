@@ -9,6 +9,8 @@ import EditChat from "./edit-chat";
 import Invite from "./invite-contacts";
 import ChatInvitations from "./chat-invitations";
 import LeaveChat from "./leave-chat";
+import Info from "./info";
+
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
 
@@ -158,6 +160,7 @@ function ChatContainer({
               <Invite selectedChatRoom={selectedChatRoom} users={users} />
             </div>
             <div id="user" className="flex gap-2">
+              <Info users={users} selectedChatRoom={selectedChatRoom} />
               <ChatInvitations users={users} />
               <LeaveChat selectedChatRoom={selectedChatRoom} />
             </div>

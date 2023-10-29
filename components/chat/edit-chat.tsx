@@ -139,7 +139,7 @@ function EditChat({ selectedChatRoom }: any) {
                 <AiOutlineEdit size={22} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Edit current chat</p>
+                <div>Edit current chat</div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
