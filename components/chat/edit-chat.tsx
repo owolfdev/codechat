@@ -20,6 +20,10 @@ import { useForm, useFormState } from "react-hook-form";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
+import { useToast } from "@/components/ui/use-toast";
+
+import { useUser } from "@clerk/nextjs";
+
 import * as z from "zod";
 import {
   Form,
@@ -49,6 +53,11 @@ function EditChat({ selectedChatRoom }: any) {
   const { editChatRoomName } = useSupabaseChat();
   const dialogRef = useRef<HTMLElement | null>(null);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { user } = useUser();
+
+  const { toast } = useToast();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,13 +85,26 @@ function EditChat({ selectedChatRoom }: any) {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values);
+    console.log("values for submit edit changes", values);
+    console.log("selectedChatRoom", selectedChatRoom);
     editChatRoomName(
       selectedChatRoom?.chat_room_id,
       values.name,
       values.description
     );
+    toast({
+      title: "Chat edited.",
+      description: `"${values.name}" was edited successfully.`,
+    });
   }
+
+  useEffect(() => {
+    if (selectedChatRoom && user?.id === selectedChatRoom.admin_id) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [selectedChatRoom, user]);
 
   useEffect(() => {
     if (selectedChatRoom) {
@@ -110,14 +132,14 @@ function EditChat({ selectedChatRoom }: any) {
   const ToolTipComponent = () => {
     return (
       <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" onClick={handleResetDialog}>
+        <Button size="sm" variant="ghost">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
                 <AiOutlineEdit size={22} />
               </TooltipTrigger>
               <TooltipContent className="mb-2">
-                <p>Edit Current Chat</p>
+                <p>Edit current chat</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -180,10 +202,24 @@ function EditChat({ selectedChatRoom }: any) {
                     </FormItem>
                   )}
                 />
-                <div className="flex gap-4">
-                  <DialogClose asChild>
-                    <Button type="submit">Edit Chat</Button>
-                  </DialogClose>
+                <div className="flex flex-col gap-4">
+                  <div className="flex gap-4">
+                    <DialogClose disabled={!isAdmin} asChild>
+                      <Button type="submit" disabled={!isAdmin}>
+                        Edit Chat
+                      </Button>
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button variant="destructive">Cancel</Button>
+                    </DialogClose>
+                  </div>
+                  <div>
+                    {!isAdmin && (
+                      <span className="text-sm">
+                        You must be Admin to edit this chat.
+                      </span>
+                    )}
+                  </div>
                 </div>
               </form>
             </Form>

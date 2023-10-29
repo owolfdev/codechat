@@ -29,6 +29,8 @@ import {
 
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 
+import { useToast } from "@/components/ui/use-toast";
+
 function ChatInvitations({ users }: { users: any }) {
   const { userId, sessionId, getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
@@ -36,6 +38,8 @@ function ChatInvitations({ users }: { users: any }) {
     useSupabaseChat();
   const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
   const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
+
+  const { toast } = useToast();
 
   const supbaseRealtimeSubscription = async () => {
     const supabaseAccessToken = await getToken({
@@ -94,12 +98,17 @@ function ChatInvitations({ users }: { users: any }) {
 
   function handleChangeParticipantStatus(
     status: string,
-    participantId: string
+    participantId: string,
+    chatRoomName: string
   ) {
     console.log("handleChangeParticipantStatus", status, participantId);
     changeParticipantStatus(status, participantId).then((response) => {
       console.log("response:", response);
       // fetchInvitations();
+    });
+    toast({
+      title: "Invitation status updated.",
+      description: `Invitation status for "${chatRoomName}" was updated successfully to "${status}".`,
     });
   }
 
@@ -160,7 +169,8 @@ function ChatInvitations({ users }: { users: any }) {
                       console.log("onValueChange", value);
                       handleChangeParticipantStatus(
                         value as string,
-                        invitation.participant_id
+                        invitation.participant_id,
+                        invitation.chat_room_name
                       );
                     }}
                   >

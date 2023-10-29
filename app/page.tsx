@@ -26,7 +26,6 @@ export default async function Home() {
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
-          <div>Client</div>
           <ChatContainer users={users} currentUser={currentUser} />
         </div>
       </div>

@@ -110,6 +110,8 @@ export function useSupabaseChat() {
         .select("*")
         .eq("admin_id", user.id);
 
+      console.log("data for check default chat room:", data);
+
       if (data && data.length > 0) {
         console.log("This user has a chat room.");
         // setDefaultChatRoomExists(true); // Set the flag to true if a chat room exists
@@ -132,6 +134,10 @@ export function useSupabaseChat() {
     newName: string,
     description: string
   ) => {
+    console.log("Editing chat room name...");
+    console.log("roomId", roomId);
+    console.log("newName", newName);
+    console.log("description", description);
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -186,7 +192,8 @@ export function useSupabaseChat() {
 
       // Define the expected type for chatRoomData
       type ChatRoomData = {
-        chat_room_id: string; // Assuming "id" is the chat_room_id field in chat_rooms
+        chat_room_id: string;
+        name: string;
       };
 
       const chatRoomDataForCheckLength = chatRoomData! as ChatRoomData[];
@@ -207,6 +214,8 @@ export function useSupabaseChat() {
         );
 
         console.log("Chat room created successfully.");
+        return newChatRoom;
+
         // You can add any additional logic here if needed
       } else {
         console.error("Chat room data is null or empty.");
@@ -221,10 +230,6 @@ export function useSupabaseChat() {
     invitation_status: string,
     invited_by: string
   ) => {
-    // console.log("Adding participant to chat room...");
-    // console.log("user_email", user_email);
-    // console.log("chat_room_id", chat_room_id);
-
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -244,15 +249,24 @@ export function useSupabaseChat() {
         console.error(existingRecordError);
         alert("Error checking for existing participant record");
       } else if (existingRecord && existingRecord.length > 0) {
-        // Record already exists, show an alert
-        alert("This user has already been invited to the chat room.");
+        // Record already exists, update the invitation_status to 'pending'
+        const existingParticipant = existingRecord[0]; // Assuming there's only one record
+
+        const { error: updateError } = await supabase
+          .from("chat_participants")
+          .update({ invitation_status: "pending" })
+          .eq("user_email", existingParticipant.user_email)
+          .eq("chat_room_id", existingParticipant.chat_room_id); // Add this condition
+
+        if (updateError) {
+          console.error(updateError);
+          alert("Error updating participant status");
+        } else {
+          console.log("Participant status updated to 'pending'.");
+          // You can add any additional logic here if needed
+        }
       } else {
         // Record doesn't exist, insert it
-        // console.log("Adding participant to chat room...");
-        // console.log("user_email", user_email);
-        // console.log("chat_room_id", chat_room_id);
-        // console.log("invitation_status", invitation_status);
-
         const { error } = await supabase.from("chat_participants").insert([
           {
             user_email,

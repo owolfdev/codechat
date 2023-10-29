@@ -5,6 +5,7 @@ import { IBM_Plex_Mono } from "next/font/google";
 import { Open_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/nav/site-header";
+import { Toaster } from "@/components/ui/toaster";
 
 import Footer from "@/components/nav/footer";
 
@@ -49,6 +50,7 @@ export default function RootLayout({
               <main className="flex flex-col items-center justify-between sm:px-24 sm:py-24 py-8 px-8 gap-4">
                 {children}
               </main>
+              <Toaster />
             </div>
             <Footer />
           </ThemeProvider>

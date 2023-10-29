@@ -84,13 +84,23 @@ function ChatContainer({
           async (payload: any) => {
             // Check if the updated participant is in the selected chat room
 
+            console.log("PAYLOAD", payload);
+
             const chatRoomsForFilter = await getChatRoomsForUserUpdate();
 
-            console.log("Chat Rooms!!!!!!!!", chatRooms);
+            setChatRooms(chatRoomsForFilter!);
 
-            const chatRoom = chatRoomsForFilter?.find(
+            let chatRoom = chatRoomsForFilter?.find(
               (room) => room.chat_room_id === payload.new.chat_room_id
             );
+
+            console.log("CHAT ROOMS", chatRoomsForFilter);
+
+            if (!chatRoom && chatRoomsForFilter) {
+              chatRoom = chatRoomsForFilter[0];
+            }
+
+            console.log("CHAT ROOM from chat container", chatRoom);
 
             if (!chatRoom) return;
 
@@ -115,7 +125,25 @@ function ChatContainer({
     if (user && isLoaded && isSignedIn) {
       supbaseRealtimeSubscription();
     }
-  }, [user, isLoaded, isSignedIn, chatRooms]);
+
+    const unsubscribeRealtimeSubscription = async () => {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      return () => {
+        if (user && isLoaded && isSignedIn) {
+          supabase
+            .channel("user_chat_rooms_list_for_user_invitations")
+            .unsubscribe();
+        }
+      };
+    };
+
+    unsubscribeRealtimeSubscription();
+  }, [user]);
 
   return (
     <div className="px-10 py-8 border rounded w-full max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">

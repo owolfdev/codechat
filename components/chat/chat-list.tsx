@@ -37,9 +37,24 @@ function ChatList({
   React.useEffect(() => {
     const storedChatRoom = localStorage.getItem(`selectedChatRoom_${user?.id}`);
     if (storedChatRoom) {
-      setSelectedChatRoom(JSON.parse(storedChatRoom));
+      const storedChatRoomObj = JSON.parse(storedChatRoom);
+      const matchingChatRoom = chatRooms.find(
+        (room) => room.chat_room_id === storedChatRoomObj.chat_room_id
+      );
+
+      if (matchingChatRoom) {
+        // Check if the name in local storage matches the name in chatRooms
+        if (storedChatRoomObj.name !== matchingChatRoom.name) {
+          storedChatRoomObj.name = matchingChatRoom.name; // Update the name
+          localStorage.setItem(
+            `selectedChatRoom_${user?.id}`,
+            JSON.stringify(storedChatRoomObj)
+          );
+        }
+        setSelectedChatRoom(storedChatRoomObj);
+      }
     }
-  }, [user?.id]);
+  }, [chatRooms, user?.id]);
 
   const handleChatRoomSelect = (room: ChatRoom) => {
     // console.log("update", room);

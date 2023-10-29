@@ -21,6 +21,8 @@ import { useForm, useFormState } from "react-hook-form";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
+import { useToast } from "@/components/ui/use-toast";
+
 import * as z from "zod";
 import {
   Form,
@@ -63,6 +65,8 @@ function LeaveChat({ selectedChatRoom }: any) {
   const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
   const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
 
+  const { toast } = useToast();
+
   useEffect(() => {
     const fetchInvitations = async () => {
       const participants = await getParticipantRecordsForUser(
@@ -87,8 +91,12 @@ function LeaveChat({ selectedChatRoom }: any) {
     // console.log("filteredInvitations:", filteredInvitations);
   }, [allInvitations, filteredInvitations]);
 
-  const handleLeaveChat = (e: any) => {
+  const handleLeaveChat = (chatName: string) => {
     // console.log("handleLeaveChat");
+    toast({
+      title: "Success",
+      description: `You have left the chat "${chatName}".`,
+    });
     changeParticipantStatus("left", filteredInvitations[0].participant_id);
   };
 
@@ -129,7 +137,8 @@ function LeaveChat({ selectedChatRoom }: any) {
             <DialogHeader>
               <DialogTitle>Leave Chat</DialogTitle>
               <DialogDescription>
-                Are you sure you want to leave this chat?
+                Are you sure you want to leave{" "}
+                <span className="font-bold">{selectedChatRoom?.name}</span>?
               </DialogDescription>
             </DialogHeader>
 
@@ -184,7 +193,11 @@ function LeaveChat({ selectedChatRoom }: any) {
             end form */}
             <div className="flex gap-4">
               <DialogClose asChild>
-                <Button onClick={handleLeaveChat}>Leave Chat</Button>
+                <Button
+                  onClick={(e) => handleLeaveChat(selectedChatRoom?.name)}
+                >
+                  Leave Chat
+                </Button>
               </DialogClose>
               <DialogClose asChild>
                 <Button variant="destructive">Cancel</Button>

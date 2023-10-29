@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -20,6 +20,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useFormState } from "react-hook-form";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
+
+import { useToast } from "@/components/ui/use-toast";
 
 import * as z from "zod";
 import {
@@ -61,6 +63,8 @@ function CreateChat() {
 
   const { isDirty, isValid } = useFormState({ control });
 
+  const { toast } = useToast();
+
   const handleUpdateZodState = () => {
     // console.log("handleUpdateZodState");
     form.trigger();
@@ -72,7 +76,20 @@ function CreateChat() {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // console.log(values);
-    createChatRoom(values.name, values.description as string);
+    createChatRoom(values.name, values.description as string).then((res) => {
+      // console.log(res);
+      if (res) {
+        toast({
+          title: "Chat created.",
+          description: `"${res.name}" was created successfully.`,
+        });
+      } else {
+        toast({
+          title: "Chat not created.",
+          description: "There was a problem creating your chat.",
+        });
+      }
+    });
   }
 
   const ToolTipComponent = () => {

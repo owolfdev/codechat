@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
+import { useToast } from "@/components/ui/use-toast";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { set, useForm, useFormState } from "react-hook-form";
 
@@ -80,6 +82,8 @@ function Invite({
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [invitee, setInvitee] = useState<any | null>(null);
 
+  const { toast } = useToast();
+
   useEffect(() => {
     // console.log("selectedUser:", selectedUser);
   }, [selectedUser]);
@@ -122,6 +126,10 @@ function Invite({
     form.reset(); // Reset the entire form
     setInvitee(null);
     setSelectedUser(null);
+    toast({
+      title: "User invited.",
+      description: `"${invitee}" was invited successfully to "${selectedChatRoom.name}".`,
+    });
   };
 
   const ToolTipComponent = () => {
