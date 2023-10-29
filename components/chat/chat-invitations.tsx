@@ -161,7 +161,8 @@ function ChatInvitations({ users }: { users: any }) {
         {filteredInvitations.length === 0 && (
           <div className="text-center py-4">
             <div className="text-orange-600">
-              No pending invitations. Press confirm to exit this dialog.
+              No pending invitations. Press the close button to exit this
+              dialog.
             </div>
           </div>
         )}
