@@ -156,6 +156,7 @@ function ChatList({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
+          <SelectLabel>Chat Rooms</SelectLabel>
           <div>
             {chatRooms.length > 0 ? (
               <div>

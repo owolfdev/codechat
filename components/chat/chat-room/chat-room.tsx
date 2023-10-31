@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import ChatView from "@/components/chat/chat-room/chat-view";
+
 const popularLanguages = [
   "text",
   "javascript",
@@ -43,7 +45,8 @@ function ChatRoom({ selectedChatRoom }: any) {
     <div className="flex flex-col gap-4">
       {/* <div>{selectedChatRoom.name}</div> */}
       {/*  */}
-      <div className="border rounded-lg w-full min-h-[100px]">Chat View</div>
+      {/* <div className="border rounded-lg w-full min-h-[100px]">Chat View</div> */}
+      <ChatView />
       {/*  */}
 
       <form action="" onSubmit={handleSend}>
@@ -60,10 +63,11 @@ function ChatRoom({ selectedChatRoom }: any) {
 
             <Select>
               <SelectTrigger className="">
-                <SelectValue placeholder="Language" />
+                <SelectValue placeholder="Select language" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
+                  <SelectLabel>Languages</SelectLabel>
                   {popularLanguages.map((lang) => (
                     <SelectItem key={lang} value={lang}>
                       {lang}
