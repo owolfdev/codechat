@@ -13,6 +13,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { AiOutlineEdit } from "react-icons/ai";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -168,6 +169,7 @@ function EditChat({ selectedChatRoom }: any) {
                       <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
+                          className="sm:text-sm text-lg"
                           placeholder="Edit the title of your chat room"
                           {...field}
                         />
@@ -184,7 +186,8 @@ function EditChat({ selectedChatRoom }: any) {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input
+                        <Textarea
+                          className="sm:text-sm text-lg"
                           placeholder="Edit the description of your chat room"
                           {...field}
                         />

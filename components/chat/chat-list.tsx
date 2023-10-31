@@ -161,7 +161,7 @@ function ChatList({
               <div>
                 {chatRooms.map((room) => (
                   <SelectItem key={room.chat_room_id} value={room.name}>
-                    {room.name}
+                    <div>{room.name}</div>
                   </SelectItem>
                 ))}
               </div>

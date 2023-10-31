@@ -47,7 +47,7 @@ export default function RootLayout({
           >
             <SiteHeader />
             <div className="flex-1">
-              <main className="flex flex-col items-center justify-between sm:px-24 sm:py-24 py-8 px-8 gap-4">
+              <main className="flex flex-col items-center justify-between sm:px-24 sm:py-24 py-8 px-4 gap-4">
                 {children}
               </main>
               <Toaster />

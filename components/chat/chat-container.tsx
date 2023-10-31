@@ -9,6 +9,7 @@ import EditChat from "./edit-chat";
 import Invite from "./invite-contacts";
 import ChatInvitations from "./chat-invitations";
 import LeaveChat from "./leave-chat";
+import ChatRoom from "./chat-room/chat-room";
 import Info from "./info";
 
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
@@ -116,7 +117,7 @@ function ChatContainer({
   }, [user]);
 
   return (
-    <div className="px-10 py-8 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">
+    <div className="px-4 py-4 sm:px-10 sm:py-8 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -140,6 +141,9 @@ function ChatContainer({
               chatRooms={chatRooms}
               setChatRooms={setChatRooms}
             />
+          </div>
+          <div>
+            <ChatRoom selectedChatRoom={selectedChatRoom} />
           </div>
         </div>
       )}

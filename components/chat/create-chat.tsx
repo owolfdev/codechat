@@ -13,6 +13,7 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 import { IoAddOutline } from "react-icons/io5";
 
@@ -135,7 +136,8 @@ function CreateChat() {
                       <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="Enter the title of your chat room"
+                          className="sm:text-sm text-lg"
+                          placeholder="Title of your chat room"
                           {...field}
                         />
                       </FormControl>
@@ -151,8 +153,9 @@ function CreateChat() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="Add a description of your chat room"
+                        <Textarea
+                          className="sm:text-sm text-lg"
+                          placeholder="Description of your chat"
                           {...field}
                         />
                       </FormControl>

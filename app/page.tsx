@@ -22,18 +22,8 @@ export default async function Home() {
   };
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <ChatContainer users={users} currentUser={currentUser} />
-        </div>
-        {/* <div>
-          {users.map((user) => {
-            return <div key={user.id}>{user.id}</div>;
-          })}
-        </div>
-        <div>{currentUser.id}</div> */}
-      </div>
+    <div className="">
+      <ChatContainer users={users} currentUser={currentUser} />
     </div>
   );
 }
