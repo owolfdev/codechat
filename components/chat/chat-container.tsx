@@ -43,10 +43,7 @@ function ChatContainer({
   ); // Update the type here
 
   const getChatRoomsForUser = async () => {
-    console.log("Fetching chat rooms...");
     const chatRoomsData = await getChatRooms();
-    console.log("Fetched chat rooms:", chatRoomsData);
-    console.log("Fetched", chatRoomsData?.length, "chat rooms");
     if (chatRoomsData !== undefined) {
       setChatRooms(chatRoomsData);
     }
@@ -54,10 +51,7 @@ function ChatContainer({
   };
 
   const getChatRoomsForUserUpdate = async () => {
-    console.log("Fetching chat rooms for realtime update...");
     const chatRoomsData = await getChatRoomsForUpdate();
-    console.log("Fetched chat rooms:", chatRoomsData);
-    console.log("Fetched", chatRoomsData?.length, "chat rooms");
     if (chatRoomsData !== undefined) {
       setChatRooms(chatRoomsData);
     }
@@ -70,89 +64,63 @@ function ChatContainer({
     getChatRoomsForUser();
   }, [isLoaded, isSignedIn, user]);
 
-  const supbaseRealtimeSubscription = async () => {
-    const supabaseAccessToken = await getToken({
-      template: "supabase-codechat",
-    });
-
-    const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-    if (user && chatRooms) {
-      supabase
-        .channel("user_chat_rooms_list_for_user_invitations")
-        .on(
-          "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "chat_participants" },
-          async (payload: any) => {
-            // Check if the updated participant is in the selected chat room
-
-            console.log("PAYLOAD", payload);
-
-            const chatRoomsForFilter = await getChatRoomsForUserUpdate();
-
-            setChatRooms(chatRoomsForFilter!);
-
-            let chatRoom = chatRoomsForFilter?.find(
-              (room) => room.chat_room_id === payload.new.chat_room_id
-            );
-
-            console.log("CHAT ROOMS", chatRoomsForFilter);
-
-            if (!chatRoom && chatRoomsForFilter) {
-              chatRoom = chatRoomsForFilter[0];
-            }
-
-            console.log("CHAT ROOM from chat container", chatRoom);
-
-            if (!chatRoom) return;
-
-            // Update the selected chat room with the new payload
-            console.log("PAYLOAD", payload.new);
-            setSelectedChatRoom(chatRoom!);
-
-            // Update local storage
-            localStorage.setItem(
-              `selectedChatRoom_${user.id}`,
-              JSON.stringify(chatRoom)
-            );
-
-            // Run getChatRoomsForUserUpdate to ensure chat room data is up to date
-          }
-        )
-        .subscribe();
-    }
-  };
-
   useEffect(() => {
-    if (user && isLoaded && isSignedIn) {
-      supbaseRealtimeSubscription();
-    }
+    let supabaseRealtime: any;
 
-    const unsubscribeRealtimeSubscription = async () => {
+    const subscribeToRealtime = async () => {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
-
       const supabase = initializeSupabaseClient(supabaseAccessToken);
 
-      return () => {
-        if (user && isLoaded && isSignedIn) {
-          supabase
-            .channel("user_chat_rooms_list_for_user_invitations")
-            .unsubscribe();
-        }
-      };
+      if (user && chatRooms) {
+        supabaseRealtime = supabase
+          .channel("user_chat_rooms_list_for_user_invitations")
+          .on(
+            "postgres_changes",
+            { event: "UPDATE", schema: "public", table: "chat_participants" },
+            async (payload: any) => {
+              const chatRoomsForFilter = await getChatRoomsForUserUpdate();
+              setChatRooms(chatRoomsForFilter!);
+              let chatRoom = chatRoomsForFilter?.find(
+                (room) => room.chat_room_id === payload.new.chat_room_id
+              );
+              if (!chatRoom && chatRoomsForFilter) {
+                chatRoom = chatRoomsForFilter[0];
+              }
+              if (!chatRoom) return;
+              setSelectedChatRoom(chatRoom!);
+              localStorage.setItem(
+                `selectedChatRoom_${user.id}`,
+                JSON.stringify(chatRoom)
+              );
+            }
+          )
+          .subscribe();
+      }
     };
 
-    unsubscribeRealtimeSubscription();
+    const unsubscribeFromRealtime = async () => {
+      if (supabaseRealtime) {
+        await supabaseRealtime.unsubscribe();
+      }
+    };
+
+    if (user && isLoaded && isSignedIn) {
+      subscribeToRealtime();
+    }
+
+    return () => {
+      unsubscribeFromRealtime();
+    };
   }, [user]);
 
   return (
-    <div className="px-10 py-8 border rounded w-full max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">
+    <div className="px-10 py-8 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 items-center sm:items-stretch w-full">
           <div className="flex justify-between gap-2">
             <div id="admin" className="flex gap-2">
               <CreateChat />

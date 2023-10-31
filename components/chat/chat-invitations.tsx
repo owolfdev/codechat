@@ -41,26 +41,39 @@ function ChatInvitations({ users }: { users: any }) {
 
   const { toast } = useToast();
 
-  const supbaseRealtimeSubscription = async () => {
-    const supabaseAccessToken = await getToken({
-      template: "supabase-codechat",
-    });
-
-    const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-    supabase
-      .channel("invitations_for_user")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "chat_participants" },
-        fetchInvitations
-      )
-      .subscribe();
-  };
-
   useEffect(() => {
-    supbaseRealtimeSubscription();
-  }, []);
+    let supabaseRealtime: any;
+
+    const subscribeToRealtime = async () => {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      supabaseRealtime = supabase
+        .channel("invitations_for_user_channel")
+        .on(
+          "postgres_changes",
+          { event: "UPDATE", schema: "public", table: "chat_participants" },
+          fetchInvitations
+        )
+        .subscribe();
+    };
+
+    const unsubscribeFromRealtime = async () => {
+      if (supabaseRealtime) {
+        await supabaseRealtime.unsubscribe();
+      }
+    };
+
+    if (user && isLoaded && isSignedIn) {
+      subscribeToRealtime();
+    }
+
+    return () => {
+      unsubscribeFromRealtime();
+    };
+  }, [user]);
 
   const fetchInvitations = async () => {
     const participants = await getParticipantRecordsForUser(
@@ -89,24 +102,12 @@ function ChatInvitations({ users }: { users: any }) {
       },
     });
 
-    console.log("response", response);
-
     const data = await response.json();
-
-    console.log("data", data.data.firstName);
 
     const fullName = data.data.firstName + " " + data.data.lastName;
 
     return fullName;
   };
-
-  // const handleChangeParticipantStatus =
-  //   (status: string, participantId: string) => async () => {
-  //     console.log("handleChangeParticipantStatus", status, participantId);
-  //     const response = await changeParticipantStatus(status, participantId);
-  //     console.log("response:", response);
-  //     fetchInvitations();
-  //   };
 
   function handleChangeParticipantStatus(
     status: string,
@@ -115,7 +116,6 @@ function ChatInvitations({ users }: { users: any }) {
   ) {
     console.log("handleChangeParticipantStatus", status, participantId);
     changeParticipantStatus(status, participantId).then((response) => {
-      console.log("response:", response);
       // fetchInvitations();
     });
     toast({
@@ -132,7 +132,7 @@ function ChatInvitations({ users }: { users: any }) {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <div className="flex gap-2 items-center">
+                  <div className="flex gap-2 items-center justify-center pl-1">
                     <MdOutlineMarkEmailUnread className="transform scale-150" />
                     {filteredInvitations.length}
                   </div>
@@ -160,7 +160,7 @@ function ChatInvitations({ users }: { users: any }) {
         </DialogHeader>
         {filteredInvitations.length === 0 && (
           <div className="text-center py-4">
-            <div className="text-orange-600">
+            <div className="text-red-500">
               No pending invitations. Press the close button to exit this
               dialog.
             </div>
@@ -195,11 +195,11 @@ function ChatInvitations({ users }: { users: any }) {
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="accepted" id="r2" />
-                      <Label htmlFor="r2">Accepted</Label>
+                      <Label htmlFor="r2">Accept</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="rejected" id="r3" />
-                      <Label htmlFor="r3">Rejected</Label>
+                      <Label htmlFor="r3">Reject</Label>
                     </div>
                   </RadioGroup>
                 </div>

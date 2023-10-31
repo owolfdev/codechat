@@ -62,9 +62,8 @@ function LeaveChat({ selectedChatRoom }: any) {
   const { userId, sessionId, getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
 
-  const [allInvitations, setAllInvitations] = useState<any[]>([]); // Specify the type as an array of any
-  const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]); // Specify the type as an array of any
-
+  const [allInvitations, setAllInvitations] = useState<any[]>([]);
+  const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,8 +71,6 @@ function LeaveChat({ selectedChatRoom }: any) {
       const participants = await getParticipantRecordsForUser(
         user?.emailAddresses[0].emailAddress as string
       );
-
-      // console.log("participants from leave chat:", participants);
       setAllInvitations(participants!);
       const filteredInvites =
         participants?.filter((participant: any) => {
@@ -86,13 +83,9 @@ function LeaveChat({ selectedChatRoom }: any) {
     }
   }, [user, selectedChatRoom]);
 
-  useEffect(() => {
-    // console.log("allInvitations:", allInvitations);
-    // console.log("filteredInvitations:", filteredInvitations);
-  }, [allInvitations, filteredInvitations]);
+  useEffect(() => {}, [allInvitations, filteredInvitations]);
 
   const handleLeaveChat = (chatName: string) => {
-    // console.log("handleLeaveChat");
     toast({
       title: "Success",
       description: `You have left the chat "${chatName}".`,
@@ -102,7 +95,6 @@ function LeaveChat({ selectedChatRoom }: any) {
 
   const handleCloseDialog = () => {
     if (dialogRef.current) {
-      // Use type assertion to tell TypeScript that dialogRef.current has a close function
       (dialogRef.current as any).close();
     }
   };

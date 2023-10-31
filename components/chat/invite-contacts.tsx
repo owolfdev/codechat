@@ -2,13 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
-import Select from "react-select";
-
 import { useAuth } from "@clerk/nextjs";
 
 import { AiOutlineSend } from "react-icons/ai";
-
-// import { getAllUsers } from "@/lib/clerkUtils";
 
 import { Button } from "../ui/button";
 import {
@@ -78,27 +74,12 @@ function Invite({
 
   const { isDirty, isValid } = useFormState({ control });
 
-  // const [users, setUsers] = useState<any[]>([]);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
   const [invitee, setInvitee] = useState<any | null>(null);
 
   const { toast } = useToast();
 
-  useEffect(() => {
-    // console.log("selectedUser:", selectedUser);
-  }, [selectedUser]);
-
-  useEffect(() => {
-    // console.log("selectedChatRoom:", selectedChatRoom);
-    // console.log("logged in user", userId);
-  }, [selectedChatRoom]);
-
-  useEffect(() => {
-    // console.log("users:", users);
-  }, [users]);
-
   const handleUpdateZodState = () => {
-    // console.log("handleUpdateZodState");
     form.trigger();
   };
 
@@ -106,17 +87,9 @@ function Invite({
     form.reset();
   };
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log("onSubmit");
-    // console.log(values);
-    // console.log(selectedUser);
-    // console.log("invitee", invitee);
-  }
+  function onSubmit(values: z.infer<typeof formSchema>) {}
 
   const handleInviteUser = () => {
-    // console.log("handleInviteUser");
-    // console.log("invitee", invitee);
-    // console.log("selectedChatRoom", selectedChatRoom.chat_room_id);
     addParticipantToChatRoom(
       invitee,
       selectedChatRoom.chat_room_id,
@@ -162,13 +135,16 @@ function Invite({
           <DialogContent className=" top-[200px] max-w-[360px] sm:max-w-[425px] sm:top-1/2">
             <DialogHeader>
               <DialogTitle>Invite Contacts</DialogTitle>
-              <DialogDescription>
-                Invite contact to{" "}
-                <span className="font-bold">{selectedChatRoom?.name}</span>.
-              </DialogDescription>
+              {/* <DialogDescription>
+                Invite members to the selected chat.
+              </DialogDescription> */}
             </DialogHeader>
             {/* <div>{JSON.stringify(selectedChatRoom?.chat_room_id)}</div> */}
             {/* add form here */}
+            <div>
+              Invite member to:{" "}
+              <span className="font-bold">{selectedChatRoom?.name}</span>.
+            </div>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}

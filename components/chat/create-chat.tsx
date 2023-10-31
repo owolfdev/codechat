@@ -66,7 +66,6 @@ function CreateChat() {
   const { toast } = useToast();
 
   const handleUpdateZodState = () => {
-    // console.log("handleUpdateZodState");
     form.trigger();
   };
 
@@ -75,9 +74,7 @@ function CreateChat() {
   };
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // console.log(values);
     createChatRoom(values.name, values.description as string).then((res) => {
-      // console.log(res);
       if (res) {
         toast({
           title: "Chat created.",

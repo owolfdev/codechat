@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useAuth } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
-import { log } from "console";
 
 export function useSupabaseChat() {
   //
@@ -11,12 +10,9 @@ export function useSupabaseChat() {
   const { getToken } = useAuth();
 
   const getChatRooms = async () => {
-    console.log("Getting chat rooms...");
     const defaultChatRoomExists = await checkDefaultChatRoomExists();
-
     // Rest of your code
     if (defaultChatRoomExists) {
-      console.log("Default chat room exists.");
       // Add the code you want to run after the chat room exists here
     }
     // After the default chat room code is run, call getChatRoomList
@@ -25,28 +21,18 @@ export function useSupabaseChat() {
   };
 
   const getChatRoomsForUpdate = async () => {
-    console.log("Getting chat rooms for UPDATE...");
-
     // After the default chat room code is run, call getChatRoomList
     const data = await getChatRoomList(user);
-    console.log("data for getChatRoomsForUpdate", data);
     return data;
   };
 
   const getChatRoomList = async (user: any) => {
-    console.log("Getting chat room list... heres the user", user);
     if (user) {
-      console.log(
-        "Getting chat room list for user!!!!!!!!!:",
-        user.emailAddresses[0]
-      );
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
 
       const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-      console.log("supabase here from get chat room list", supabase);
 
       // Use select to fetch chat rooms
       const { data: chatRoomsData, error: chatRoomsError } = await supabase
@@ -87,8 +73,6 @@ export function useSupabaseChat() {
 
         // Filter out null entries (chat rooms where the user is not a participant)
         const filteredChatRoomsList = filteredChatRooms.filter(Boolean);
-
-        console.log("Chat rooms found:", filteredChatRoomsList);
         return filteredChatRoomsList;
       } else {
         console.log("No chat rooms found for the user.");
@@ -110,21 +94,16 @@ export function useSupabaseChat() {
         .select("*")
         .eq("admin_id", user.id);
 
-      console.log("data for check default chat room:", data);
-
       if (data && data.length > 0) {
-        console.log("This user has a chat room.");
         // setDefaultChatRoomExists(true); // Set the flag to true if a chat room exists
         return true;
       } else if (error) {
         console.error(error);
       } else {
-        console.log("This user does not have a chat room. Creating one...");
         const data = await createChatRoom(
           `${user.firstName}'s Chat Room`,
           `${user.firstName}'s default chat space.`
         );
-        console.log("data for create default chat room", data);
       }
     }
   };
@@ -162,7 +141,6 @@ export function useSupabaseChat() {
   };
 
   const createChatRoom = async (name: string, description: string) => {
-    console.log("Creating a new chat room...");
     if (isLoaded && isSignedIn && user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -187,8 +165,6 @@ export function useSupabaseChat() {
         alert("Error creating chat room");
         return;
       }
-
-      console.log("Chat room created successfully. DATA: ", chatRoomData);
 
       // Define the expected type for chatRoomData
       type ChatRoomData = {
@@ -234,9 +210,7 @@ export function useSupabaseChat() {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
       });
-
       const supabase = initializeSupabaseClient(supabaseAccessToken);
-
       // Check if a record with the same user_email and chat_room_id already exists
       const { data: existingRecord, error: existingRecordError } =
         await supabase
@@ -271,7 +245,6 @@ export function useSupabaseChat() {
           console.error(updateError);
           alert("Error updating participant status");
         } else {
-          console.log("Participant status updated to 'pending'.");
           // You can add any additional logic here if needed
         }
       } else {
@@ -291,7 +264,6 @@ export function useSupabaseChat() {
           alert("Error adding participant to chat room");
           return false;
         } else {
-          console.log("Participant added to chat room successfully.");
           return true;
           // You can add any additional logic here if needed
         }
@@ -306,8 +278,6 @@ export function useSupabaseChat() {
       });
 
       const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-      console.log("Getting participant records for user:", userEmail);
 
       // Use select to fetch participants
       const { data: participantsData, error: participantsError } =
@@ -351,7 +321,6 @@ export function useSupabaseChat() {
 
         return participantsWithChatRoomNames.filter(Boolean);
       } else {
-        console.log("No participants found for the user.");
         return [];
       }
     }

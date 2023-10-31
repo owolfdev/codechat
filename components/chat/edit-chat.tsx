@@ -114,14 +114,6 @@ function EditChat({ selectedChatRoom }: any) {
     }
   }, [selectedChatRoom]);
 
-  const handleLeaveChat = (e: any) => {
-    e.preventDefault();
-    console.log("handleLeaveChat");
-    if (dialogRef.current) {
-      handleCloseDialog();
-    }
-  };
-
   const handleCloseDialog = () => {
     if (dialogRef.current) {
       // Use type assertion to tell TypeScript that dialogRef.current has a close function
@@ -215,7 +207,7 @@ function EditChat({ selectedChatRoom }: any) {
                   </div>
                   <div>
                     {!isAdmin && (
-                      <span className="text-sm">
+                      <span className="text-sm text-red-500">
                         You must be Admin to edit this chat.
                       </span>
                     )}

@@ -38,11 +38,7 @@ function Info({
       },
     });
 
-    console.log("response", response);
-
     const data = await response.json();
-
-    console.log("first name", data?.data?.firstName);
 
     const fullName = data?.data?.firstName + " " + data?.data?.lastName;
 
