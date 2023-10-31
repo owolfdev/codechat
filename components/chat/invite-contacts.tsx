@@ -159,7 +159,7 @@ function Invite({
                       <FormLabel>Invitee email</FormLabel>
                       <FormControl>
                         <Input
-                          className="sm:text-sm text-lg"
+                          className="text-md sm:text-sm"
                           type="email"
                           id="email"
                           placeholder="Email"

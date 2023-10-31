@@ -136,7 +136,7 @@ function CreateChat() {
                       <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
-                          className="sm:text-sm text-lg"
+                          className="text-md sm:text-sm"
                           placeholder="Title of your chat room"
                           {...field}
                         />
@@ -154,7 +154,7 @@ function CreateChat() {
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
-                          className="sm:text-sm text-lg"
+                          className="text-md sm:text-sm"
                           placeholder="Description of your chat"
                           {...field}
                         />

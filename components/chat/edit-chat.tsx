@@ -169,7 +169,7 @@ function EditChat({ selectedChatRoom }: any) {
                       <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input
-                          className="sm:text-sm text-lg"
+                          className="text-md sm:text-sm"
                           placeholder="Edit the title of your chat room"
                           {...field}
                         />
@@ -187,7 +187,7 @@ function EditChat({ selectedChatRoom }: any) {
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
-                          className="sm:text-sm text-lg"
+                          className="text-md sm:text-sm"
                           placeholder="Edit the description of your chat room"
                           {...field}
                         />

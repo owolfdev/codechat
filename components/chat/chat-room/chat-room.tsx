@@ -14,7 +14,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 const popularLanguages = [
-  "message",
+  "text",
   "javascript",
   "html",
   "css",
@@ -76,7 +76,7 @@ function ChatRoom({ selectedChatRoom }: any) {
           <Textarea
             // ref={textAreaRef}
             // value={currentMessage}
-            className="border rounded p-2 outline-gray-400 w-full h-40"
+            className="text-md sm:text-sm"
             // onChange={(e) => handleInputChange(e.target.value)}
             placeholder="Type a message..."
           />
