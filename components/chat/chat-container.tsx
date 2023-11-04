@@ -25,6 +25,7 @@ interface User {
   firstName: string;
   lastName: string;
   email: string;
+  imageUrl: string;
 }
 
 function ChatContainer({
@@ -117,7 +118,7 @@ function ChatContainer({
   }, [user]);
 
   return (
-    <div className="px-4 py-4 sm:px-10 sm:py-8 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[600px] sm:min-w-[450px]">
+    <div className="px-2 py-2 sm:px-8 sm:py-6 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[740px] sm:min-w-[600px]">
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -143,7 +144,7 @@ function ChatContainer({
             />
           </div>
           <div>
-            <ChatRoom selectedChatRoom={selectedChatRoom} />
+            <ChatRoom users={users} selectedChatRoom={selectedChatRoom} />
           </div>
         </div>
       )}

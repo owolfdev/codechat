@@ -370,6 +370,129 @@ export function useSupabaseChat() {
     }
   };
 
+  const getParticipantsForChatRoom = async (chatRoomId: string) => {
+    console.log("chatRoomId from getParticipantsForChatRoom:", chatRoomId);
+
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Use select to fetch participants for a specific chat room
+      const { data: participantsData, error: participantsError } =
+        await supabase
+          .from("chat_participants")
+          .select("*")
+          .eq("chat_room_id", chatRoomId);
+
+      // console.log(
+      //   "participantsData from getParticipantsForChatRoom:",
+      //   participantsData
+      // );
+
+      if (participantsError) {
+        console.error(participantsError);
+        alert("Error fetching participants for chat room");
+        return [];
+      }
+
+      if (participantsData) {
+        return participantsData;
+      } else {
+        return [];
+      }
+    }
+  };
+
+  const sendChatMessage = async (
+    userId: string,
+    message: string,
+    chatRoomId: string,
+    title: string,
+    language: string
+  ) => {
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Insert the message into the chat_messages table
+      const { error } = await supabase.from("chat_messages").insert([
+        {
+          sender_id: userId,
+          message_content: message.trim(),
+          chat_room_id: chatRoomId,
+          title: title,
+          language: language,
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+        alert("Error sending message");
+      } else {
+        console.log("Message sent successfully.");
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const getChatMessagesForChatRoom = async (chatRoomId: string) => {
+    const supabaseAccessToken = await getToken({
+      template: "supabase-codechat",
+    });
+
+    const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+    console.log("chatRoomId from getChatMessagesForChatRoom:", chatRoomId);
+
+    // Use select to fetch messages for a specific chat room
+    const { data: messagesData, error: messagesError } = await supabase
+      .from("chat_messages")
+      .select("*")
+      .eq("chat_room_id", chatRoomId);
+
+    if (messagesError) {
+      console.error(messagesError);
+      alert("Error fetching messages for chat room");
+      return [];
+    }
+
+    if (messagesData) {
+      return messagesData;
+    } else {
+      return [];
+    }
+  };
+
+  const deleteChatMessage = async (messageId: string) => {
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Delete the message from the chat_messages table
+      const { error } = await supabase
+        .from("chat_messages")
+        .delete()
+        .eq("message_id", messageId);
+
+      if (error) {
+        console.error(error);
+        alert("Error deleting message");
+      } else {
+        console.log("Message deleted successfully.");
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
   return {
     getChatRooms,
     getChatRoomsForUpdate,
@@ -378,5 +501,9 @@ export function useSupabaseChat() {
     addParticipantToChatRoom,
     getParticipantRecordsForUser,
     changeParticipantStatus,
+    getParticipantsForChatRoom,
+    sendChatMessage,
+    getChatMessagesForChatRoom,
+    deleteChatMessage,
   };
 }

@@ -1,8 +1,12 @@
+"use client";
+
 import { getUserById } from "@/lib/clerkUtils";
 
 import { Button } from "../ui/button";
 
 import { AiOutlineInfoCircle } from "react-icons/ai";
+
+import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
 import {
   Tooltip,
@@ -22,6 +26,17 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
+import { useEffect, useState } from "react";
+import { set } from "react-hook-form";
+
+interface Participant {
+  participant_id: string;
+  firstName: string;
+  lastName: string;
+  user_email: string;
+  invitation_status: string;
+}
+
 function Info({
   users,
   selectedChatRoom,
@@ -29,6 +44,10 @@ function Info({
   users: any;
   selectedChatRoom: any;
 }) {
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participatingUsers, setParticipatingUsers] = useState<any[]>([]);
+  const { getParticipantsForChatRoom } = useSupabaseChat();
+
   const getFullNameById = async (userId: string) => {
     const response = await fetch("/api/get-user-by-id", {
       method: "POST",
@@ -44,6 +63,39 @@ function Info({
 
     return fullName;
   };
+
+  const getParticipants = async () => {
+    const currentParticipants = (await getParticipantsForChatRoom(
+      selectedChatRoom?.chat_room_id
+    )) as Participant[];
+
+    // console.log("currentParticipants:", currentParticipants);
+
+    const participating: Participant[] = currentParticipants.map(
+      (participant) => {
+        return users.find((user: any) => {
+          if (
+            user.email === participant.user_email &&
+            participant.invitation_status === "accepted"
+          ) {
+            return user;
+          }
+        });
+      }
+    );
+
+    // console.log("users:", users);
+    // console.log("participating:", participating);
+
+    setParticipatingUsers(participating);
+  };
+
+  useEffect(() => {
+    // console.log("selectedChatRoom, from info:", selectedChatRoom);
+    if (selectedChatRoom) {
+      getParticipants();
+    }
+  }, [selectedChatRoom]);
 
   const ToolTipComponent = () => {
     return (
@@ -87,6 +139,17 @@ function Info({
           <div>
             <span className="font-bold">Administrator:</span>{" "}
             {getFullNameById(selectedChatRoom?.admin_id)}
+          </div>
+          <div className="flex flex-col gap-2">
+            {/* <div>Participating Users:{JSON.stringify(participatingUsers)}</div> */}
+            <span className="font-bold">Participants:</span>
+            <div>
+              {participatingUsers?.map((participant) => (
+                <div key={participant?.id}>
+                  {participant?.firstName} {participant?.lastName}{" "}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <DialogFooter>

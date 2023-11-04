@@ -1,5 +1,6 @@
 import ChatContainer from "@/components/chat/chat-container";
 import { getAllUsers, getCurrentUser, getUserById } from "@/lib/clerkUtils";
+import { Divide } from "lucide-react";
 
 export default async function Home() {
   const usersData = await getAllUsers();
@@ -11,6 +12,7 @@ export default async function Home() {
       firstName: user.firstName as string,
       lastName: user.lastName as string,
       email: user.emailAddresses[0].emailAddress as string,
+      imageUrl: user.imageUrl as string,
     };
   });
 
@@ -19,6 +21,7 @@ export default async function Home() {
     firstName: currentUserData?.firstName as string,
     lastName: currentUserData?.lastName as string,
     email: currentUserData?.emailAddresses[0].emailAddress as string,
+    imageUrl: currentUserData?.imageUrl as string,
   };
 
   return (

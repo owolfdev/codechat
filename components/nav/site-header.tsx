@@ -12,7 +12,7 @@ export function SiteHeader() {
             <Link href="/">CodeChat</Link>{" "}
           </div>
           <div className="text-md">
-            <Link href="/about">/about</Link>
+            {/* <Link href="/about">/about</Link> */}
           </div>
         </nav>
         <div className="flex items-center justify-end flex-1 space-x-4">
