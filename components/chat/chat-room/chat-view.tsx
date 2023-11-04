@@ -176,13 +176,17 @@ function ChatView({
           return message.sender_id === user?.id ? (
             <div key={message.id} className="flex justify-end w-full">
               <div className="w-full sm:w-11/12">
-                <ChatMessage message={message} />
+                <ChatMessage message={message} chatRoom={selectedChatRoom} />
               </div>
             </div>
           ) : (
             <div key={message.id} className="flex justify-start w-full">
               <div className="w-full sm:w-11/12">
-                <ChatMessage message={message} avatar={avatar} />
+                <ChatMessage
+                  message={message}
+                  avatar={avatar}
+                  chatRoom={selectedChatRoom}
+                />
               </div>
             </div>
           );

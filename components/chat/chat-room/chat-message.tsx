@@ -1,7 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { DeleteMessage } from "./delete-message";
+import { useUser } from "@clerk/clerk-react";
 
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -125,10 +126,46 @@ const handleDeleteMessage = async (id: string): Promise<void> => {
   console.log("id:", id);
 };
 
-function ChatMessage({ message, avatar }: { message: any; avatar?: any }) {
+function ChatMessage({
+  message,
+  avatar,
+  chatRoom,
+}: {
+  message: any;
+  avatar?: any;
+  chatRoom?: any;
+}) {
   const [copiedItemId, setCopiedItemId] = useState<string | null>(null);
   const [copiedTitles, setCopiedTitles] = useState<Record<string, boolean>>({});
   const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [adminId, setAdminId] = useState<string | null>(null);
+  const { user } = useUser();
+
+  useEffect(() => {
+    // console.log("chat room:", chatRoom);
+    if (chatRoom) {
+      setAdminId(chatRoom.admin_id);
+    }
+
+    if (user) {
+      setIsAdmin(user.id === chatRoom.admin_id);
+    }
+  }, [chatRoom, user]);
+
+  const canDeleteMessage = (message: any) => {
+    if (hoveredMessageId === message.message_id) {
+      if (isAdmin) {
+        return true;
+      }
+      if (user?.id === message.sender_id) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   return (
     <div className="">
       <div key={message.id} className="flex justify-between items-start gap-2">
@@ -155,7 +192,7 @@ function ChatMessage({ message, avatar }: { message: any; avatar?: any }) {
             setCopiedTitles={setCopiedTitles}
             copiedTitles={copiedTitles}
           />
-          {hoveredMessageId === message.message_id && (
+          {canDeleteMessage(message) && (
             <DeleteMessage
               action={handleDeleteMessage}
               message={message}
