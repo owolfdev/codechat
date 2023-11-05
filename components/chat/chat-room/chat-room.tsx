@@ -110,59 +110,61 @@ function ChatRoom({ users, selectedChatRoom }: any) {
       <ChatView users={users} selectedChatRoom={selectedChatRoom} />
       {/*  */}
 
-      <form action="" onSubmit={handleSend}>
-        <div className="flex flex-col gap-4 w-full">
-          <div>
-            <div className="flex gap-4 w-full">
-              <Input
-                id="title"
-                type="text"
+      {selectedChatRoom && (
+        <form action="" onSubmit={handleSend}>
+          <div className="flex flex-col gap-4 w-full">
+            <div>
+              <div className="flex gap-4 w-full">
+                <Input
+                  id="title"
+                  type="text"
+                  className="text-md sm:text-sm"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Add a title"
+                />
+
+                <Select onValueChange={(value) => setLanguage(value)}>
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectLabel>Languages</SelectLabel>
+                      {popularLanguages.map((lang) => (
+                        <SelectItem key={lang} value={lang}>
+                          {lang}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+              {titleError && (
+                <div className="text-red-500 text-sm">{titleError}</div>
+              )}
+            </div>
+            <div>
+              <Textarea
+                // ref={textAreaRef}
+                value={message}
                 className="text-md sm:text-sm"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Add a title"
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Type a message..."
               />
-
-              <Select onValueChange={(value) => setLanguage(value)}>
-                <SelectTrigger className="">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Languages</SelectLabel>
-                    {popularLanguages.map((lang) => (
-                      <SelectItem key={lang} value={lang}>
-                        {lang}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
+              {messageError && (
+                <div className="text-red-500 text-sm">{messageError}</div>
+              )}
             </div>
-            {titleError && (
-              <div className="text-red-500 text-sm">{titleError}</div>
-            )}
-          </div>
-          <div>
-            <Textarea
-              // ref={textAreaRef}
-              value={message}
-              className="text-md sm:text-sm"
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type a message..."
-            />
-            {messageError && (
-              <div className="text-red-500 text-sm">{messageError}</div>
-            )}
-          </div>
 
-          <Button type="submit">
-            <div className="flex gap-2 items-center">
-              <span>Send</span> <AiOutlineSend size={20} />
-            </div>
-          </Button>
-        </div>
-      </form>
+            <Button type="submit">
+              <div className="flex gap-2 items-center">
+                <span>Send</span> <AiOutlineSend size={20} />
+              </div>
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

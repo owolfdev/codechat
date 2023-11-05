@@ -493,6 +493,32 @@ export function useSupabaseChat() {
     }
   };
 
+  // Add this function to your useSupabaseChat hook
+  const deleteChatRoom = async (chatRoomId: string) => {
+    console.log("chatRoomId from deleteChatRoom:", chatRoomId);
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Delete the chat room from the chat_rooms table
+      const { error } = await supabase
+        .from("chat_rooms")
+        .delete()
+        .eq("chat_room_id", chatRoomId);
+
+      if (error) {
+        console.error(error);
+        alert("Error deleting chat room");
+      } else {
+        console.log("Chat room deleted successfully.");
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
   return {
     getChatRooms,
     getChatRoomsForUpdate,
@@ -505,5 +531,6 @@ export function useSupabaseChat() {
     sendChatMessage,
     getChatMessagesForChatRoom,
     deleteChatMessage,
+    deleteChatRoom,
   };
 }

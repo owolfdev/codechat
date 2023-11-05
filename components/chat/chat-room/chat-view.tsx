@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useState, useRef } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useAuth } from "@clerk/nextjs";
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
@@ -38,6 +38,8 @@ function ChatView({
 
   const [participatingUsers, setParticipatingUsers] = useState<any[]>([]);
   const { getParticipantsForChatRoom } = useSupabaseChat();
+
+  const bottomRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     if (selectedChatRoom?.chat_room_id) {
@@ -150,6 +152,13 @@ function ChatView({
   };
 
   useEffect(() => {
+    console.log("use effect [messages], scroll to bottom", chatMessages);
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
+
+  useEffect(() => {
     console.log("selectedChatRoom, from info:", selectedChatRoom);
     if (selectedChatRoom) {
       getParticipants();
@@ -162,7 +171,7 @@ function ChatView({
 
   return (
     <div>
-      <div className="border rounded-lg w-full min-h-[100px] px-2 py-2 sm:px-4 sm:py-4 text-black  flex flex-col gap-4">
+      <div className="border rounded-lg w-full min-h-[100px] max-h-screen px-2 py-2 sm:px-4 sm:py-4 text-black  flex flex-col gap-4 overflow-y-scroll bg-white dark:bg-black ">
         {chatMessages.length === 0 && (
           <div className="text-center text-gray-500">
             No messages in this chat room yet.
@@ -191,6 +200,7 @@ function ChatView({
             </div>
           );
         })}
+        <div ref={bottomRef} />
       </div>
     </div>
   );

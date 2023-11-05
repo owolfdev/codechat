@@ -183,7 +183,7 @@ function ChatMessage({
         <div
           onMouseEnter={() => setHoveredMessageId(message.message_id)}
           onMouseLeave={() => setHoveredMessageId(null)}
-          className="relative w-full border rounded-lg px-2 py-1 bg-gray-700 text-white"
+          className="relative w-full border rounded-lg px-2 py-1 bg-gray-600 dark:bg-gray-700 text-white"
         >
           <ControlBar
             message={message}

@@ -118,7 +118,7 @@ function ChatContainer({
   }, [user]);
 
   return (
-    <div className="px-2 py-2 sm:px-8 sm:py-6 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[740px] sm:min-w-[600px]">
+    <div className="px-2 py-2 sm:px-8 sm:py-6 border rounded-lg w-full max-w-[360px] sm:max-w-screen-md md:min-w-[740px] sm:min-w-[600px] dark:bg-gray-900 bg-gray-100 ">
       {loading ? (
         <div>Loading...</div>
       ) : (
@@ -126,13 +126,21 @@ function ChatContainer({
           <div className="flex justify-between gap-2">
             <div id="admin" className="flex gap-2">
               <CreateChat />
-              <EditChat selectedChatRoom={selectedChatRoom} />
-              <Invite selectedChatRoom={selectedChatRoom} users={users} />
+              {selectedChatRoom && (
+                <EditChat selectedChatRoom={selectedChatRoom} />
+              )}
+              {selectedChatRoom && (
+                <Invite selectedChatRoom={selectedChatRoom} users={users} />
+              )}
             </div>
             <div id="user" className="flex gap-2">
-              <Info users={users} selectedChatRoom={selectedChatRoom} />
+              {selectedChatRoom && (
+                <Info users={users} selectedChatRoom={selectedChatRoom} />
+              )}
               <ChatInvitations users={users} />
-              <LeaveChat selectedChatRoom={selectedChatRoom} />
+              {selectedChatRoom && (
+                <LeaveChat selectedChatRoom={selectedChatRoom} />
+              )}
             </div>
           </div>
           <div className="flex w-full">

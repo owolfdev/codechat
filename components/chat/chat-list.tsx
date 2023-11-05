@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@clerk/clerk-react";
 import { useUser } from "@clerk/clerk-react";
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
+import { get } from "http";
 
 interface ChatRoom {
   chat_room_id: string;
@@ -126,6 +127,27 @@ function ChatList({
                 `selectedChatRoom_${user?.id}`,
                 JSON.stringify(payload.new)
               );
+            }
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "DELETE",
+            schema: "public",
+            table: "chat_rooms",
+          },
+          (payload: any) => {
+            console.log("delete", payload);
+            if (payload.old.chat_room_id === selectedChatRoom?.chat_room_id) {
+              setSelectedChatRoom(null);
+              setChatRooms((prevChatRooms) =>
+                prevChatRooms.filter(
+                  (chatRoom) =>
+                    chatRoom.chat_room_id !== payload.old.chat_room_id
+                )
+              );
+              localStorage.removeItem(`selectedChatRoom_${user?.id}`);
             }
           }
         )

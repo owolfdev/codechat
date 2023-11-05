@@ -130,7 +130,8 @@ function Info({
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <div>
-            <span className="font-bold">Title:</span> {selectedChatRoom?.name}
+            <span className="font-bold">Title:</span>{" "}
+            <span className="font-bold">{selectedChatRoom?.name}</span>
           </div>
           <div>
             <span className="font-bold">Description:</span>{" "}

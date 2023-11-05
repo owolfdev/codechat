@@ -89,23 +89,57 @@ function Invite({
 
   function onSubmit(values: z.infer<typeof formSchema>) {}
 
-  const handleInviteUser = () => {
+  // In your React component
+  const handleInviteUser = async () => {
+    const inviteeEmail = getValues("email"); // Get the email address from the form
+
     addParticipantToChatRoom(
       invitee,
       selectedChatRoom.chat_room_id,
       "pending",
       userId as string
-    ).then((res) => {
-      if (res) {
+    );
+
+    try {
+      const response = await fetch("/api/send-email-to-invitee", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: inviteeEmail,
+          subject: "You are invited to a chat room in CodeChat app",
+          html: `
+          <h1>You are invited to a chat room in CodeChat app</h1>
+          <p>Hi there coder!</p> <p>You have been invited to join a chat room called: &quot;${selectedChatRoom.name}&quot;.</p> <p>To accept the invitation, you should log in, or sign up for CodeChat app.</p> <p>Look for the envelope icon to access the invitation</p> <p>Click the link below to open the app:</p>
+          <a href="http://localhost:3000/">Click here to open CodeChat</a>
+          <p>See you there!</p>
+          <strong>CodeChat team</strong>
+        `,
+        }),
+      });
+
+      if (response.ok) {
+        // Email sent successfully
         toast({
-          title: "User invited.",
-          description: `"${invitee}" was invited successfully to "${selectedChatRoom.name}".`,
+          title: "User invited and email sent.",
+          description: `"${inviteeEmail}" was invited successfully to "${selectedChatRoom.name}". An email has been sent.`,
         });
+
+        // Reset the form and clear state
+        form.reset();
+        setInvitee(null);
+        setSelectedUser(null);
+      } else {
+        // Handle error response from the server
+        console.error("Error sending email:", response.statusText);
+        // You can also show an error message to the user if needed
       }
-    });
-    form.reset(); // Reset the entire form
-    setInvitee(null);
-    setSelectedUser(null);
+    } catch (error) {
+      // Handle network or other errors
+      console.error("Error sending email:", error);
+      // You can also show an error message to the user if needed
+    }
   };
 
   const ToolTipComponent = () => {
