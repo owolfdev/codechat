@@ -156,8 +156,9 @@ const customStylesDef = (theme: any) => ({
   }),
   input: (styles: any) => ({
     ...styles,
-    color: theme === "dark" ? "white" : "#020817",
+    color: theme === "dark" ? "black" : "black",
   }),
+
   singleValue: (provided: any) => ({
     ...provided,
     color: theme === "dark" ? "white" : "#020817",
@@ -174,17 +175,21 @@ function ChatRoom({ users, selectedChatRoom }: any) {
 
   const { sendChatMessage } = useSupabaseChat();
 
-  const { setTheme, theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+
+  useEffect(() => {
+    setCustomStyles(customStylesDef(resolvedTheme));
+  }, [resolvedTheme]);
 
   const { user } = useUser();
 
   const [customStyles, setCustomStyles] =
     useState<CustomStyles>(initialCustomStyles);
 
-  useEffect(() => {
-    //console.log("theme", theme)
-    setCustomStyles(customStylesDef(theme));
-  }, [theme]);
+  // useEffect(() => {
+  //   //console.log("theme", theme)
+  //   setCustomStyles(customStylesDef(theme));
+  // }, [theme]);
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
