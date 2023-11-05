@@ -155,7 +155,7 @@ function Info({
         </div>
         <DialogFooter>
           <DialogClose asChild>
-            <Button>Close</Button>
+            <Button variant="secondary">Close</Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

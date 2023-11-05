@@ -205,7 +205,7 @@ function EditChat({ selectedChatRoom }: any) {
                       </Button>
                     </DialogClose>
                     <DialogClose asChild>
-                      <Button variant="destructive">Cancel</Button>
+                      <Button variant="secondary">Cancel</Button>
                     </DialogClose>
                   </div>
                   <div>

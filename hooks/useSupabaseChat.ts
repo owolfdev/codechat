@@ -227,11 +227,11 @@ export function useSupabaseChat() {
         const existingParticipant = existingRecord[0]; // Assuming there's only one record
 
         if (existingParticipant.invitation_status === "accepted") {
-          alert("Invitation already accepted.");
-          return;
+          // alert("Invitation already accepted.");
+          return "accepted";
         } else if (existingParticipant.invitation_status === "rejected") {
-          alert("Invitation already rejected.");
-          return;
+          // alert("Invitation already rejected.");
+          return "rejected";
         }
 
         // If invitation_status is not accepted or rejected, update it to 'pending'

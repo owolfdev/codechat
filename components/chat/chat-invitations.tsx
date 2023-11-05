@@ -119,8 +119,8 @@ function ChatInvitations({ users }: { users: any }) {
       // fetchInvitations();
     });
     toast({
-      title: "Invitation status updated.",
-      description: `Invitation status for "${chatRoomName}" was updated successfully to "${status}".`,
+      title: "Invitation accepted.",
+      description: `You are now an active member of the chat room "${chatRoomName}".`,
     });
   }
 

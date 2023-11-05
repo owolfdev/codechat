@@ -188,7 +188,7 @@ function LeaveChat({ selectedChatRoom }: any) {
               )}
               <div>
                 <DialogClose asChild>
-                  <Button variant="destructive">Cancel</Button>
+                  <Button variant="secondary">Cancel</Button>
                 </DialogClose>
               </div>
             </div>

@@ -175,7 +175,7 @@ function CreateChat() {
                     )}
                   </DialogClose>
                   <DialogClose asChild>
-                    <Button variant="destructive">Cancel</Button>
+                    <Button variant="secondary">Cancel</Button>
                   </DialogClose>
                 </div>
               </form>

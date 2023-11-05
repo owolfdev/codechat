@@ -44,6 +44,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+const NEXT_PUBLIC_APP_URL = process.env.NEXT_PUBLIC_APP_URL;
+
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email address.",
@@ -93,12 +95,30 @@ function Invite({
   const handleInviteUser = async () => {
     const inviteeEmail = getValues("email"); // Get the email address from the form
 
-    addParticipantToChatRoom(
+    const addParticipantStatus = await addParticipantToChatRoom(
       invitee,
       selectedChatRoom.chat_room_id,
       "pending",
       userId as string
     );
+
+    console.log("addParticipantStatus", addParticipantStatus);
+
+    if (addParticipantStatus === "accepted") {
+      toast({
+        title: "User already accepted the invitation.",
+        description: `${inviteeEmail} has already been invited to "${selectedChatRoom.name}" and accepted the invitation.`,
+      });
+      return;
+    }
+
+    if (addParticipantStatus === "rejected") {
+      toast({
+        title: "User already rejected the invitation.",
+        description: `${inviteeEmail} has already been invited to "${selectedChatRoom.name}" and rejected the invitation.`,
+      });
+      return;
+    }
 
     try {
       const response = await fetch("/api/send-email-to-invitee", {
@@ -112,7 +132,7 @@ function Invite({
           html: `
           <h1>You are invited to a chat room in CodeChat app</h1>
           <p>Hi there coder!</p> <p>You have been invited to join a chat room called: &quot;${selectedChatRoom.name}&quot;.</p> <p>To accept the invitation, you should log in, or sign up for CodeChat app.</p> <p>Look for the envelope icon to access the invitation</p> <p>Click the link below to open the app:</p>
-          <a href="http://localhost:3000/">Click here to open CodeChat</a>
+          <a href="${NEXT_PUBLIC_APP_URL}">Click here to open CodeChat</a>
           <p>See you there!</p>
           <strong>CodeChat team</strong>
         `,
@@ -120,6 +140,7 @@ function Invite({
       });
 
       if (response.ok) {
+        console.log("response", response);
         // Email sent successfully
         toast({
           title: "User invited and email sent.",
@@ -222,7 +243,7 @@ function Invite({
                     )}
                   </DialogClose>
                   <DialogClose asChild>
-                    <Button variant="destructive">Cancel</Button>
+                    <Button variant="secondary">Cancel</Button>
                   </DialogClose>
                 </div>
               </form>
