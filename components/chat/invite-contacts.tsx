@@ -132,7 +132,7 @@ function Invite({
           html: `
           <h1>You are invited to a chat room in CodeChat app</h1>
           <p>Hi there coder!</p> <p>You have been invited to join a chat room called: &quot;${selectedChatRoom.name}&quot;.</p> <p>To accept the invitation, you should log in, or sign up for CodeChat app.</p> <p>Look for the envelope icon to access the invitation</p> <p>Click the link below to open the app:</p>
-          <a href="${NEXT_PUBLIC_APP_URL}">Click here to open CodeChat</a>
+          <a href="https://codechat-eta.vercel.app/">Click here to open CodeChat</a>
           <p>See you there!</p>
           <strong>CodeChat team</strong>
         `,
