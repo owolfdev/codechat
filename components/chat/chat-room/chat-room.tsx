@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import RSSelect from "react-select";
+import RSSelect, { StylesConfig } from "react-select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AiOutlineSend } from "react-icons/ai";
@@ -12,15 +12,15 @@ import { useUser } from "@clerk/clerk-react";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectLabel,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 
 import { Textarea } from "@/components/ui/textarea";
 
@@ -52,10 +52,6 @@ const popularLanguages = [
 interface CustomStyles {
   option: (defaultStyles: any, state: any) => any;
   placeholder: (provided: any, state: any) => any;
-  clearIndicator: (provided: any, state: any) => any;
-  dropdownIndicator: (provided: any, state: any) => any;
-  indicatorSeparator: (provided: any, state: any) => any;
-  multiValue: (provided: any, state: any) => any;
   control: (defaultStyles: any, state: any) => any;
   input: (styles: any) => any;
 }
@@ -66,29 +62,8 @@ const initialCustomStyles: CustomStyles = {
   }),
   placeholder: (provided, state) => ({
     ...provided,
-    color: "#6B7280",
-    fontSize: "14px",
   }),
 
-  clearIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-  }),
-  dropdownIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-  }),
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-
-  multiValue: (provided, state) => ({
-    ...provided,
-    backgroundColor: "black",
-    borderRadius: "0.35rem",
-    color: "#6B7280",
-    fontSize: "14px",
-  }),
   control: (defaultStyles, state) => ({
     ...defaultStyles,
     borderRadius: "0.35rem",
@@ -104,38 +79,38 @@ const initialCustomStyles: CustomStyles = {
 const customStylesDef = (theme: any) => ({
   option: (defaultStyles: any, { isFocused }: any) => ({
     ...defaultStyles,
-    backgroundColor: "white", // Set background color to white
-    color: "black", // Set text color to black
+    backgroundColor: isFocused
+      ? theme === "dark"
+        ? "#e2e8f0"
+        : "#e2e8f0"
+      : "transparent",
+    color: isFocused
+      ? theme === "dark"
+        ? "black"
+        : "#6B728"
+      : theme === "dark"
+      ? "black"
+      : "#6B728",
     ":active": {
       ...defaultStyles[":active"],
-      backgroundColor: "gray", // Set highlight background color to gray
+      backgroundColor: isFocused
+        ? theme === "dark"
+          ? "#e2e8f0"
+          : "#e2e8f0"
+        : "transparent",
+      color: isFocused
+        ? theme === "dark"
+          ? "black"
+          : "#6B728"
+        : theme === "dark"
+        ? "black"
+        : "#6B728",
     },
-  }),
-
-  clearIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-  }),
-  dropdownIndicator: (provided: any) => ({
-    ...provided,
-    display: "none",
-  }),
-  indicatorSeparator: () => ({
-    display: "none",
   }),
 
   placeholder: (provided: any, state: any) => ({
     // Styles for the placeholder text
     ...provided,
-    color: "#6B7280",
-    fontSize: "14px",
-  }),
-
-  multiValue: (provided: any, state: any) => ({
-    // Styles for the placeholder text
-    ...provided,
-    backgroundColor: "black",
-    borderRadius: "0.35rem",
     color: "#6B7280",
     fontSize: "14px",
   }),
@@ -154,14 +129,19 @@ const customStylesDef = (theme: any) => ({
       borderColor: "gray-300",
     },
   }),
-  input: (styles: any) => ({
-    ...styles,
-    color: theme === "dark" ? "black" : "black",
+
+  input: (provided: any) => ({
+    ...provided,
+    color: theme === "dark" ? "white" : "black",
   }),
 
   singleValue: (provided: any) => ({
     ...provided,
-    color: theme === "dark" ? "white" : "#020817",
+    color: theme === "dark" ? "white" : "black",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    fontSize: "14px",
   }),
 });
 
@@ -285,8 +265,8 @@ function ChatRoom({ users, selectedChatRoom }: any) {
                     // isLoading={isLoading}
                     // isClearable={isClearable}
                     // isRtl={isRtl}
-                    // isSearchable={isSearchable}
-                    // name="color"
+                    isSearchable={true}
+                    name="color"
                     options={popularLanguages.map((item) => ({
                       value: item,
                       label: item,
