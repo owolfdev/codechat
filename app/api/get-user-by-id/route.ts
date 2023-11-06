@@ -1,7 +1,6 @@
 import { getUserById } from "@/lib/clerkUtils";
 export async function POST(req: Request) {
   const { id } = await req.json();
-  // console.log(id);
 
   const user = await getUserById(id);
 

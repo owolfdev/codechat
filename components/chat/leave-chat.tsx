@@ -102,7 +102,6 @@ function LeaveChat({ selectedChatRoom }: any) {
   };
 
   const handleDeleteChat = async (chatName: string) => {
-    console.log("delete chat", chatName);
     await deleteChatRoom(selectedChatRoom?.chat_room_id);
     toast({
       title: "Success",

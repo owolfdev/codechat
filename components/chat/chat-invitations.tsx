@@ -80,7 +80,6 @@ function ChatInvitations({ users }: { users: any }) {
       user?.emailAddresses[0].emailAddress as string
     );
 
-    // console.log("participants:", participants);
     setAllInvitations(participants!);
     const filteredInvites =
       participants?.filter((participant: any) => {
@@ -114,7 +113,6 @@ function ChatInvitations({ users }: { users: any }) {
     participantId: string,
     chatRoomName: string
   ) {
-    console.log("handleChangeParticipantStatus", status, participantId);
     changeParticipantStatus(status, participantId).then((response) => {
       // fetchInvitations();
     });
@@ -168,7 +166,6 @@ function ChatInvitations({ users }: { users: any }) {
         )}
         <div className="grid gap-4 py-4">
           {filteredInvitations.map((invitation) => {
-            console.log("invitation.invited_by:", invitation.invited_by);
             const invitedByName = getFullNameById(invitation.invited_by);
             return (
               <div
@@ -181,7 +178,6 @@ function ChatInvitations({ users }: { users: any }) {
                   <RadioGroup
                     defaultValue="pending"
                     onValueChange={(value) => {
-                      console.log("onValueChange", value);
                       handleChangeParticipantStatus(
                         value as string,
                         invitation.participant_id,

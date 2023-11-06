@@ -21,7 +21,6 @@ const deleteAlertMessage = "Are you sure you want to delete this message?";
 
 export const ChatContent: React.FC<{ item: ChatMessage }> = React.memo(
   ({ item }) => {
-    console.log("ChatContent!!");
     return (
       <pre className=" whitespace-pre-wrap">
         <SyntaxHighlighter
@@ -65,7 +64,6 @@ export const ControlBar: React.FC<{
     setCopiedTitles,
     copiedTitles,
   }) => {
-    console.log("ControlBar!!");
     return (
       <div id="control-bar" className="flex pt-1 pb-1 mb-1 gap-4 items-center">
         <div className="">
@@ -87,7 +85,6 @@ export const ControlBar: React.FC<{
               navigator.clipboard
                 .writeText(message.title)
                 .then(() => {
-                  console.log("Text copied to clipboard:", message.title);
                   setCopiedTitles((prevCopiedTitles: any) => ({
                     ...prevCopiedTitles,
                     [message.chat_room_id]: true,
@@ -122,9 +119,7 @@ export const ControlBar: React.FC<{
 );
 ControlBar.displayName = "ControlBar";
 
-const handleDeleteMessage = async (id: string): Promise<void> => {
-  console.log("id:", id);
-};
+const handleDeleteMessage = async (id: string): Promise<void> => {};
 
 function ChatMessage({
   message,
@@ -143,7 +138,6 @@ function ChatMessage({
   const { user } = useUser();
 
   useEffect(() => {
-    // console.log("chat room:", chatRoom);
     if (chatRoom) {
       setAdminId(chatRoom.admin_id);
     }

@@ -69,8 +69,6 @@ function Info({
       selectedChatRoom?.chat_room_id
     )) as Participant[];
 
-    // console.log("currentParticipants:", currentParticipants);
-
     const participating: Participant[] = currentParticipants.map(
       (participant) => {
         return users.find((user: any) => {
@@ -84,14 +82,10 @@ function Info({
       }
     );
 
-    // console.log("users:", users);
-    // console.log("participating:", participating);
-
     setParticipatingUsers(participating);
   };
 
   useEffect(() => {
-    // console.log("selectedChatRoom, from info:", selectedChatRoom);
     if (selectedChatRoom) {
       getParticipants();
     }
@@ -145,8 +139,8 @@ function Info({
             {/* <div>Participating Users:{JSON.stringify(participatingUsers)}</div> */}
             <span className="font-bold">Participants:</span>
             <div>
-              {participatingUsers?.map((participant) => (
-                <div key={participant?.id}>
+              {participatingUsers?.map((participant, index) => (
+                <div key={index}>
                   {participant?.firstName} {participant?.lastName}{" "}
                 </div>
               ))}

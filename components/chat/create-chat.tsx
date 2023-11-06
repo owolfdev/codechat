@@ -49,7 +49,7 @@ const formSchema = z.object({
   description: z.string().optional(),
 });
 
-function CreateChat() {
+function CreateChat({ subscription }: { subscription: string }) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -165,9 +165,12 @@ function CreateChat() {
                   )}
                 />
                 <div className="flex gap-4">
+                  {/* {`subscription ${JSON.stringify(subscription)}`} */}
                   <DialogClose asChild>
                     {isValid ? (
-                      <Button type="submit">Create Chat</Button>
+                      <Button disabled={subscription === "free"} type="submit">
+                        Create Chat
+                      </Button>
                     ) : (
                       <Button disabled={true} type="submit">
                         Create Chat
@@ -181,7 +184,13 @@ function CreateChat() {
               </form>
             </Form>
             {/* end form */}
-            <DialogFooter></DialogFooter>
+            <DialogFooter className="">
+              {subscription === "free" && (
+                <span className="text-red-700 text-sm ">
+                  You must upgrade your subscription to add another chat room.
+                </span>
+              )}
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

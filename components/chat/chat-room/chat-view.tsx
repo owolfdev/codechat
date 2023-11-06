@@ -53,9 +53,7 @@ function ChatView({
     }
   }, [selectedChatRoom?.chat_room_id]);
 
-  useEffect(() => {
-    console.log("chatMessages:", chatMessages);
-  }, [chatMessages]);
+  useEffect(() => {}, [chatMessages]);
 
   useEffect(() => {
     let supabaseRealtime: any;
@@ -73,10 +71,6 @@ function ChatView({
             "postgres_changes",
             { event: "INSERT", schema: "public", table: "chat_messages" },
             async (payload: any) => {
-              console.log(
-                "chat room id from realtime in chat view",
-                currentChatRoomId // Access the chatRoomId from state
-              );
               getMessages(currentChatRoomId); // Pass the chatRoomId to getMessages
             }
           )
@@ -84,10 +78,6 @@ function ChatView({
             "postgres_changes",
             { event: "DELETE", schema: "public", table: "chat_messages" },
             async (payload: any) => {
-              console.log(
-                "Delete message from realtime in chat view",
-                currentChatRoomId // Access the chatRoomId from state
-              );
               getMessages(currentChatRoomId); // Pass the chatRoomId to getMessages
             }
           )
@@ -131,8 +121,6 @@ function ChatView({
       selectedChatRoom?.chat_room_id
     )) as Participant[];
 
-    console.log("currentParticipants:", currentParticipants);
-
     const participating: Participant[] = currentParticipants.map(
       (participant) => {
         return users.find((user: any) => {
@@ -146,28 +134,22 @@ function ChatView({
       }
     );
 
-    console.log("users:", users);
-    console.log("participating:", participating);
     setParticipatingUsers(participating);
   };
 
   useEffect(() => {
-    console.log("use effect [messages], scroll to bottom", chatMessages);
     if (bottomRef.current) {
       bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages]);
 
   useEffect(() => {
-    console.log("selectedChatRoom, from info:", selectedChatRoom);
     if (selectedChatRoom) {
       getParticipants();
     }
   }, [selectedChatRoom]);
 
-  useEffect(() => {
-    console.log("sender", sender);
-  }, [sender]);
+  useEffect(() => {}, [sender]);
 
   return (
     <div>
@@ -177,19 +159,19 @@ function ChatView({
             No messages in this chat room yet.
           </div>
         )}
-        {chatMessages.map((message: any) => {
+        {chatMessages.map((message: any, index: any) => {
           const avatar = participatingUsers.find(
             (user: any) => user?.id === message?.sender_id
           )?.imageUrl;
 
           return message.sender_id === user?.id ? (
-            <div key={message.id} className="flex justify-end w-full">
+            <div key={message.id + index} className="flex justify-end w-full">
               <div className="w-full sm:w-11/12">
                 <ChatMessage message={message} chatRoom={selectedChatRoom} />
               </div>
             </div>
           ) : (
-            <div key={message.id} className="flex justify-start w-full">
+            <div key={message.id + index} className="flex justify-start w-full">
               <div className="w-full sm:w-11/12">
                 <ChatMessage
                   message={message}

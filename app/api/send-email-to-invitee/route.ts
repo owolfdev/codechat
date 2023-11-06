@@ -2,7 +2,6 @@ import nodemailer from "nodemailer";
 
 export async function POST(req: Request) {
   const request_body = await req.json();
-  console.log(request_body);
 
   const mailOptions = {
     from: "chatcodeapp@gmail.com", // Replace with your Gmail email

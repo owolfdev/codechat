@@ -167,7 +167,6 @@ function ChatRoom({ users, selectedChatRoom }: any) {
     useState<CustomStyles>(initialCustomStyles);
 
   // useEffect(() => {
-  //   //console.log("theme", theme)
   //   setCustomStyles(customStylesDef(theme));
   // }, [theme]);
 
@@ -181,7 +180,6 @@ function ChatRoom({ users, selectedChatRoom }: any) {
     } catch (error: any) {
       // Handle title validation errors and set the error message
       const parsedObject = JSON.parse(error.message);
-      console.log("parsedObject:", parsedObject[0].message);
       setTitleError(parsedObject[0].message);
       return; // Don't proceed if there are validation errors
     }
@@ -192,7 +190,6 @@ function ChatRoom({ users, selectedChatRoom }: any) {
     } catch (error: any) {
       // Handle message validation errors and set the error message
       const parsedObject = JSON.parse(error.message);
-      console.log("parsedObject:", parsedObject[0].message);
       setMessageError(parsedObject[0].message);
       return; // Don't proceed if there are validation errors
     }

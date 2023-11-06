@@ -58,7 +58,6 @@ function ChatList({
   }, [chatRooms, user?.id]);
 
   const handleChatRoomSelect = (room: ChatRoom) => {
-    // console.log("update", room);
     setSelectedChatRoom(room);
     localStorage.setItem(`selectedChatRoom_${user?.id}`, JSON.stringify(room));
   };
@@ -138,7 +137,6 @@ function ChatList({
             table: "chat_rooms",
           },
           (payload: any) => {
-            console.log("delete", payload);
             if (payload.old.chat_room_id === selectedChatRoom?.chat_room_id) {
               setSelectedChatRoom(null);
               setChatRooms((prevChatRooms) =>

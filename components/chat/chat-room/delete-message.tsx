@@ -36,8 +36,6 @@ export function DeleteMessage({
   const { toast } = useToast();
 
   const handleAction = () => {
-    // console.log("action:", action);
-    // console.log("item:", item);
     // action(item);
     deleteChatMessage(message.message_id).then(() => {
       toast({

@@ -8,12 +8,10 @@ const { getToken } = auth();
 //   const token = await getToken({ template: "supabase" });
 
 export const getChatRooms = async () => {
-  console.log("Getting chat rooms...");
   const defaultChatRoomExists = await checkDefaultChatRoomExists();
 
   // Rest of your code
   if (defaultChatRoomExists) {
-    console.log("Default chat room exists.");
     // Add the code you want to run after the chat room exists here
   }
   // After the default chat room code is run, call getChatRoomList
@@ -70,10 +68,8 @@ const getChatRoomList = async () => {
       // Filter out null entries (chat rooms where the user is not a participant)
       const filteredChatRoomsList = filteredChatRooms.filter(Boolean);
 
-      console.log("Chat rooms found:", filteredChatRoomsList);
       return filteredChatRoomsList;
     } else {
-      console.log("No chat rooms found for the user.");
       return [];
     }
   }
@@ -94,17 +90,14 @@ const checkDefaultChatRoomExists = async () => {
       .eq("admin_id", user.id);
 
     if (data && data.length > 0) {
-      console.log("This user has a chat room.");
       return true;
     } else if (error) {
       console.error(error);
     } else {
-      console.log("This user does not have a chat room. Creating one...");
       const data = await createChatRoom(
         `${user.firstName}'s Chat Room`,
         `${user.firstName}'s default chat space.`
       );
-      console.log("data for create default chat room", data);
     }
   }
 };
@@ -132,7 +125,6 @@ const editChatRoomName = async (
       console.error(error);
       alert("Error editing chat room name");
     } else {
-      console.log("Chat room name updated successfully.");
       // You can add any additional logic here if needed
     }
   }
@@ -140,7 +132,6 @@ const editChatRoomName = async (
 
 export const createChatRoom = async (name: string, description: string) => {
   const user = await getCurrentUser();
-  console.log("Creating a new chat room...");
   if (user) {
     const supabaseAccessToken = await getToken({
       template: "supabase-codechat",
@@ -166,8 +157,6 @@ export const createChatRoom = async (name: string, description: string) => {
       return;
     }
 
-    console.log("Chat room created successfully. DATA: ", chatRoomData);
-
     // Define the expected type for chatRoomData
     type ChatRoomData = {
       chat_room_id: string; // Assuming "id" is the chat_room_id field in chat_rooms
@@ -187,7 +176,6 @@ export const createChatRoom = async (name: string, description: string) => {
         user.id
       );
 
-      console.log("Chat room created successfully.");
       // You can add any additional logic here if needed
     } else {
       console.error("Chat room data is null or empty.");
@@ -202,9 +190,6 @@ const addParticipantToChatRoom = async (
   invitation_status: string,
   invited_by: string
 ) => {
-  console.log("Adding participant to chat room...");
-  console.log("user_email", user_email);
-  console.log("chat_room_id", chat_room_id);
   const user = await getCurrentUser();
 
   if (user) {
@@ -229,10 +214,6 @@ const addParticipantToChatRoom = async (
       alert("This user has already been invited to the chat room.");
     } else {
       // Record doesn't exist, insert it
-      console.log("Adding participant to chat room...");
-      console.log("user_email", user_email);
-      console.log("chat_room_id", chat_room_id);
-      console.log("invitation_status", invitation_status);
 
       const { error } = await supabase.from("chat_participants").insert([
         {
@@ -248,7 +229,6 @@ const addParticipantToChatRoom = async (
         console.error(error);
         alert("Error adding participant to chat room");
       } else {
-        console.log("Participant added to chat room successfully.");
         // You can add any additional logic here if needed
       }
     }
@@ -263,8 +243,6 @@ const getParticipantRecordsForUser = async (userEmail: string) => {
     });
 
     const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-    console.log("Getting participant records for user:", userEmail);
 
     // Use select to fetch participants
     const { data: participantsData, error: participantsError } = await supabase
@@ -307,7 +285,6 @@ const getParticipantRecordsForUser = async (userEmail: string) => {
 
       return participantsWithChatRoomNames.filter(Boolean);
     } else {
-      console.log("No participants found for the user.");
       return [];
     }
   }
@@ -349,7 +326,6 @@ const changeParticipantStatus = async (
         console.error(error);
         alert("Error changing participant status");
       } else {
-        console.log("Participant status changed successfully.");
         // You can add any additional logic here if needed
       }
     } else {

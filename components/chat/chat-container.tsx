@@ -35,8 +35,14 @@ function ChatContainer({
   users: User[];
   currentUser: User;
 }) {
-  const { getChatRooms, getChatRoomsForUpdate } = useSupabaseChat();
+  const {
+    getChatRooms,
+    getChatRoomsForUpdate,
+    findProfileByUserId,
+    createProfile,
+  } = useSupabaseChat();
   const { userId, sessionId, getToken } = useAuth();
+  const [profileData, setProfileData] = useState<any>(null); // Update the type here
   const { isLoaded, isSignedIn, user } = useUser();
   const [loading, setLoading] = useState(true);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
@@ -61,10 +67,39 @@ function ChatContainer({
     return chatRoomsData;
   };
 
+  const getProfile = async (_userId: string) => {
+    console.log("getProfile: ", _userId);
+    let profile = await findProfileByUserId(_userId);
+
+    if (profile === undefined) {
+      profile = await createProfile(_userId, "free");
+    }
+
+    console.log("profile: ", profile);
+
+    return profile;
+  };
+
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
+    if (!isLoaded || !isSignedIn || !userId) return;
+    console.log("check for user profile: ", user, userId);
     getChatRoomsForUser();
-  }, [isLoaded, isSignedIn, user]);
+    getProfile(userId!).then((data: any) => {
+      console.log("data from subscription: ", data);
+      setProfileData({
+        id: userId!,
+        firstName: user!.firstName,
+        lastName: user!.lastName,
+        email: user!.emailAddresses[0].emailAddress,
+        imageUrl: user!.imageUrl,
+        subscription: data?.subscription,
+      });
+    });
+  }, [isLoaded, isSignedIn, user, userId]);
+
+  useEffect(() => {
+    console.log("profileData", profileData);
+  }, [profileData]);
 
   useEffect(() => {
     let supabaseRealtime: any;
@@ -125,7 +160,7 @@ function ChatContainer({
         <div className="flex flex-col gap-4 items-center sm:items-stretch w-full">
           <div className="flex justify-between gap-2">
             <div id="admin" className="flex gap-2">
-              <CreateChat />
+              <CreateChat subscription={profileData?.subscription} />
               {selectedChatRoom && (
                 <EditChat selectedChatRoom={selectedChatRoom} />
               )}

@@ -102,8 +102,6 @@ function Invite({
       userId as string
     );
 
-    console.log("addParticipantStatus", addParticipantStatus);
-
     if (addParticipantStatus === "accepted") {
       toast({
         title: "User already accepted the invitation.",
@@ -140,7 +138,6 @@ function Invite({
       });
 
       if (response.ok) {
-        console.log("response", response);
         // Email sent successfully
         toast({
           title: "User invited and email sent.",

@@ -34,22 +34,16 @@ export default function SupabaseData() {
       .from("test_table")
       .select()
       .eq("user", user?.id); // Filter data by the current user's ID
-
-    console.log("current user id", user?.id);
-
-    console.log("data for current user:", data, "error:", error);
     return data;
   };
 
   useEffect(() => {
     if (user && user.id) {
-      console.log("user:", user.id);
       setCurrentUserId(user.id);
     }
   }, [user]);
 
   useEffect(() => {
-    console.log("current user id:", currentUserId);
     if (currentUserId) {
       getDataForCurrentUser().then((data: any) => {
         setCurrentUsersData(data);
@@ -58,8 +52,6 @@ export default function SupabaseData() {
   }, [currentUserId]);
 
   const fetchData = async () => {
-    console.log("fetching data");
-    console.log("user:", user);
     // TODO #1: Replace with your JWT template name
     const supabaseAccessToken = await getToken({
       template: "supabase-codechat",
@@ -71,13 +63,10 @@ export default function SupabaseData() {
 
     const { data, error } = await supabase.from("test_table").select();
 
-    console.log("data:", data, "error:", error);
-
     // TODO #3: Handle the response
   };
 
   const addData = async () => {
-    console.log("adding data");
     // TODO #1: Replace with your JWT template name
     const supabaseAccessToken = await getToken({
       template: "supabase-codechat",

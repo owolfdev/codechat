@@ -75,7 +75,6 @@ export function useSupabaseChat() {
         const filteredChatRoomsList = filteredChatRooms.filter(Boolean);
         return filteredChatRoomsList;
       } else {
-        console.log("No chat rooms found for the user.");
         return [];
       }
     }
@@ -113,10 +112,6 @@ export function useSupabaseChat() {
     newName: string,
     description: string
   ) => {
-    console.log("Editing chat room name...");
-    console.log("roomId", roomId);
-    console.log("newName", newName);
-    console.log("description", description);
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -134,7 +129,6 @@ export function useSupabaseChat() {
         console.error(error);
         alert("Error editing chat room name");
       } else {
-        console.log("Chat room name updated successfully.");
         // You can add any additional logic here if needed
       }
     }
@@ -189,7 +183,6 @@ export function useSupabaseChat() {
           user.id
         );
 
-        console.log("Chat room created successfully.");
         return newChatRoom;
 
         // You can add any additional logic here if needed
@@ -361,7 +354,6 @@ export function useSupabaseChat() {
           console.error(error);
           alert("Error changing participant status");
         } else {
-          console.log("Participant status changed successfully.");
           // You can add any additional logic here if needed
         }
       } else {
@@ -371,8 +363,6 @@ export function useSupabaseChat() {
   };
 
   const getParticipantsForChatRoom = async (chatRoomId: string) => {
-    console.log("chatRoomId from getParticipantsForChatRoom:", chatRoomId);
-
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -386,11 +376,6 @@ export function useSupabaseChat() {
           .from("chat_participants")
           .select("*")
           .eq("chat_room_id", chatRoomId);
-
-      // console.log(
-      //   "participantsData from getParticipantsForChatRoom:",
-      //   participantsData
-      // );
 
       if (participantsError) {
         console.error(participantsError);
@@ -435,7 +420,6 @@ export function useSupabaseChat() {
         console.error(error);
         alert("Error sending message");
       } else {
-        console.log("Message sent successfully.");
         // You can add any additional logic here if needed
       }
     }
@@ -447,8 +431,6 @@ export function useSupabaseChat() {
     });
 
     const supabase = initializeSupabaseClient(supabaseAccessToken);
-
-    console.log("chatRoomId from getChatMessagesForChatRoom:", chatRoomId);
 
     // Use select to fetch messages for a specific chat room
     const { data: messagesData, error: messagesError } = await supabase
@@ -487,7 +469,6 @@ export function useSupabaseChat() {
         console.error(error);
         alert("Error deleting message");
       } else {
-        console.log("Message deleted successfully.");
         // You can add any additional logic here if needed
       }
     }
@@ -495,7 +476,6 @@ export function useSupabaseChat() {
 
   // Add this function to your useSupabaseChat hook
   const deleteChatRoom = async (chatRoomId: string) => {
-    console.log("chatRoomId from deleteChatRoom:", chatRoomId);
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -513,8 +493,92 @@ export function useSupabaseChat() {
         console.error(error);
         alert("Error deleting chat room");
       } else {
-        console.log("Chat room deleted successfully.");
         // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const createProfile = async (userId: string, subscription: string) => {
+    console.log("createProfile: userId", userId, "subscription", subscription);
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Insert the profile into the profiles table
+      const { error } = await supabase.from("profiles").upsert([
+        {
+          id: userId,
+          subscription,
+        },
+      ]);
+
+      if (error) {
+        console.error(error);
+        alert("Error creating profile");
+      } else {
+        // You can add any additional logic here if needed
+        const data = await findProfileByUserId(userId);
+        return data;
+      }
+    }
+  };
+
+  const modifyProfileSubscription = async (
+    userId: string,
+    newSubscription: string
+  ) => {
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Update the profile's subscription in the profiles table
+      const { error } = await supabase
+        .from("profiles")
+        .update({ subscription: newSubscription })
+        .eq("id", userId);
+
+      if (error) {
+        console.error(error);
+        alert("Error modifying profile subscription");
+      } else {
+        // You can add any additional logic here if needed
+      }
+    }
+  };
+
+  const findProfileByUserId = async (userId: string) => {
+    console.log("findProfileByUserId: userId", userId);
+    if (user) {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      // Use select to fetch the profile based on userId
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId);
+
+      console.log("findProfileByUserId: profileData", profileData);
+
+      if (profileError) {
+        console.error(profileError);
+        alert("Error fetching profile");
+        return null;
+      }
+
+      if (profileData && profileData.length > 0) {
+        return profileData[0];
+      } else {
+        // await createProfile(userId, "free");
       }
     }
   };
@@ -532,5 +596,8 @@ export function useSupabaseChat() {
     getChatMessagesForChatRoom,
     deleteChatMessage,
     deleteChatRoom,
+    createProfile,
+    modifyProfileSubscription,
+    findProfileByUserId,
   };
 }
