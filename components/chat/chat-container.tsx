@@ -201,7 +201,11 @@ function ChatContainer({
               />
             </div>
             <div>
-              <ChatRoom users={users} selectedChatRoom={selectedChatRoom} />
+              <ChatRoom
+                subscription={profileData?.subscription}
+                users={users}
+                selectedChatRoom={selectedChatRoom}
+              />
             </div>
           </div>
         </div>

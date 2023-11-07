@@ -19,9 +19,11 @@ interface Participant {
 function ChatView({
   users,
   selectedChatRoom,
+  subscription,
 }: {
   users: any;
   selectedChatRoom: any;
+  subscription: string;
 }) {
   const { getChatMessagesForChatRoom } = useSupabaseChat();
   const [chatMessages, setChatMessages] = React.useState<any>([]);
@@ -31,15 +33,15 @@ function ChatView({
   const { user } = useUser();
   const { getToken } = useAuth();
 
-  const getMessages = async (chatRoomId: any) => {
-    const messages = await getChatMessagesForChatRoom(chatRoomId);
-    setChatMessages(messages);
-  };
-
   const [participatingUsers, setParticipatingUsers] = useState<any[]>([]);
   const { getParticipantsForChatRoom } = useSupabaseChat();
 
   const bottomRef = useRef<null | HTMLDivElement>(null);
+
+  const getMessages = async (chatRoomId: any) => {
+    const messages = await getChatMessagesForChatRoom(chatRoomId);
+    setChatMessages(messages);
+  };
 
   useEffect(() => {
     if (selectedChatRoom?.chat_room_id) {
@@ -153,6 +155,7 @@ function ChatView({
 
   return (
     <div>
+      {/* <div>{subscription}</div> */}
       <div className="border rounded-lg w-full min-h-[100px] max-h-screen px-2 py-2 sm:px-4 sm:py-4 text-black  flex flex-col gap-4 overflow-y-scroll bg-white dark:bg-black ">
         {chatMessages.length === 0 && (
           <div className="text-center text-gray-500">

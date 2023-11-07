@@ -145,7 +145,7 @@ const customStylesDef = (theme: any) => ({
   }),
 });
 
-function ChatRoom({ users, selectedChatRoom }: any) {
+function ChatRoom({ users, selectedChatRoom, subscription }: any) {
   const [title, setTitle] = React.useState("");
   const [message, setMessage] = React.useState("");
   const [language, setLanguage] = React.useState("javascript");
@@ -153,9 +153,22 @@ function ChatRoom({ users, selectedChatRoom }: any) {
   const [titleError, setTitleError] = React.useState(""); // State for title error message
   const [messageError, setMessageError] = React.useState(""); // State for message error message
 
-  const { sendChatMessage } = useSupabaseChat();
+  const { sendChatMessage, getChatMessagesForChatRoom } = useSupabaseChat();
 
   const { resolvedTheme } = useTheme();
+
+  const [chatMessages, setChatMessages] = React.useState<any>([]);
+
+  const getMessages = async (chatRoomId: any) => {
+    const messages = await getChatMessagesForChatRoom(chatRoomId);
+    setChatMessages(messages);
+  };
+
+  useEffect(() => {
+    if (selectedChatRoom?.chat_room_id) {
+      getMessages(selectedChatRoom?.chat_room_id);
+    }
+  }, [selectedChatRoom]);
 
   useEffect(() => {
     setCustomStyles(customStylesDef(resolvedTheme));
@@ -172,6 +185,16 @@ function ChatRoom({ users, selectedChatRoom }: any) {
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (subscription === "free") {
+      if (selectedChatRoom?.chat_room_id) {
+        getMessages(selectedChatRoom?.chat_room_id);
+      }
+      if (chatMessages.length > 3) {
+        alert("You are on a free plan. Please upgrade to more messages.");
+        return;
+      }
+    }
 
     // Validate inputs using Zod
     try {
@@ -217,12 +240,23 @@ function ChatRoom({ users, selectedChatRoom }: any) {
           <div>{user.imageUrl}</div>
         ))}
       </div> */}
-      <ChatView users={users} selectedChatRoom={selectedChatRoom} />
+      <ChatView
+        subscription={subscription}
+        users={users}
+        selectedChatRoom={selectedChatRoom}
+      />
       {/*  */}
 
       {selectedChatRoom && (
         <form action="" onSubmit={handleSend}>
           <div className="flex flex-col gap-4 w-full">
+            {chatMessages.length > 3 && (
+              <div className="flex w-full text-sm text-red-500 px-4">
+                You have reached the limit of allowed chat messages for the free
+                tier. Please delete some messages, or upgrade to increase your
+                message limit.
+              </div>
+            )}
             <div>
               <div className="flex gap-4 w-full">
                 <Input
