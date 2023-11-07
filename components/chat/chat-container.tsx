@@ -161,7 +161,7 @@ function ChatContainer({
           <BarLoader
             color="#767676"
             loading={loading}
-            // size={150}
+            width={200}
             aria-label="Loading Spinner"
             data-testid="loader"
           />
