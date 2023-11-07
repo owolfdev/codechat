@@ -12,7 +12,7 @@ import LeaveChat from "./leave-chat";
 import ChatRoom from "./chat-room/chat-room";
 import Info from "./info";
 
-import ClipLoader from "react-spinners/ClipLoader";
+import BarLoader from "react-spinners/BarLoader";
 
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
@@ -157,12 +157,11 @@ function ChatContainer({
   return (
     <div>
       {loading ? (
-        <div className=" h-1/2 pt-[100px]">
-          <ClipLoader
-            color="black"
+        <div className=" h-1/2 pt-[200px]">
+          <BarLoader
+            color="#767676"
             loading={loading}
-            // cssOverride={override}
-            size={150}
+            // size={150}
             aria-label="Loading Spinner"
             data-testid="loader"
           />
