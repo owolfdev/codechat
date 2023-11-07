@@ -180,8 +180,8 @@ function ChatList({
           <div>
             {chatRooms.length > 0 ? (
               <div>
-                {chatRooms.map((room) => (
-                  <SelectItem key={room.chat_room_id} value={room.name}>
+                {chatRooms.map((room, index) => (
+                  <SelectItem key={room.chat_room_id + index} value={room.name}>
                     <div>{room.name}</div>
                   </SelectItem>
                 ))}

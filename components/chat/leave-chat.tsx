@@ -23,6 +23,8 @@ import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
 import { useToast } from "@/components/ui/use-toast";
 
+import { Checkbox } from "@/components/ui/checkbox";
+
 import * as z from "zod";
 import {
   Form,
@@ -51,23 +53,65 @@ const formSchema = z.object({
   description: z.string(),
 });
 
-function LeaveChat({ selectedChatRoom }: any) {
+interface Participant {
+  participant_id: string;
+  firstName: string;
+  lastName: string;
+  user_email: string;
+  invitation_status: string;
+}
+
+function LeaveChat({ selectedChatRoom, users }: any) {
   const {
     editChatRoomName,
     changeParticipantStatus,
     getParticipantRecordsForUser,
     deleteChatRoom,
+    getParticipantsForChatRoom,
   } = useSupabaseChat();
   const dialogRef = useRef<HTMLElement | null>(null);
 
   const { userId, sessionId, getToken } = useAuth();
   const { isLoaded, isSignedIn, user } = useUser();
 
+  const [participatingUsers, setParticipatingUsers] = useState<any[]>([]);
+
   const [allInvitations, setAllInvitations] = useState<any[]>([]);
   const [filteredInvitations, setFilteredInvitations] = useState<any[]>([]);
   const { toast } = useToast();
 
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  const getParticipants = async () => {
+    const currentParticipants = (await getParticipantsForChatRoom(
+      selectedChatRoom?.chat_room_id
+    )) as Participant[];
+
+    const participating: Participant[] = currentParticipants.map(
+      (participant) => {
+        return users.find((user: any) => {
+          if (
+            user.email === participant.user_email &&
+            participant.invitation_status === "accepted"
+          ) {
+            return user;
+          }
+        });
+      }
+    );
+
+    setParticipatingUsers(participating);
+  };
+
+  useEffect(() => {
+    if (selectedChatRoom) {
+      getParticipants();
+    }
+  }, [selectedChatRoom]);
+
+  useEffect(() => {
+    console.log("participating users", participatingUsers);
+  }, [participatingUsers]);
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -108,6 +152,11 @@ function LeaveChat({ selectedChatRoom }: any) {
       description: `You have deleted the chat "${chatName}".`,
     });
     // changeParticipantStatus("deleted", filteredInvitations[0].participant_id);
+  };
+
+  const handleCheckboxChange = (e: any) => {
+    console.log("e: ", e);
+    console.log("e.target.checked: ", e.target);
   };
 
   const handleCloseDialog = () => {
@@ -191,6 +240,31 @@ function LeaveChat({ selectedChatRoom }: any) {
                 </DialogClose>
               </div>
             </div>
+            {/* {isAdmin && (
+              <div className="flex flex-col gap-1">
+                <span className="font-bold">Suspend Participant:</span>
+                <div className="flex flex-col gap-2">
+                  {participatingUsers?.map((participant, index) => (
+                    <div key={index}>
+                      {participant && (
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id={participant.participant_id}
+                            onCheckedChange={handleCheckboxChange}
+                          />
+                          <label
+                            htmlFor="terms"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                          >
+                            {participant?.firstName} {participant?.lastName}
+                          </label>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )} */}
 
             {!isAdmin && (
               <div className="text-sm  text-muted-foreground  ">

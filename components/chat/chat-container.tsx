@@ -12,6 +12,8 @@ import LeaveChat from "./leave-chat";
 import ChatRoom from "./chat-room/chat-room";
 import Info from "./info";
 
+import BarLoader from "react-spinners/BarLoader";
+
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
 import { useAuth } from "@clerk/nextjs";
 
@@ -153,41 +155,54 @@ function ChatContainer({
   }, [user]);
 
   return (
-    <div className="px-2 py-2 sm:px-8 sm:py-6 border rounded-lg w-full max-w-[360px] sm:max-w-screen-lg md:min-w-[740px] sm:min-w-[600px] dark:bg-gray-900 bg-gray-100 ">
+    <div>
       {loading ? (
-        <div>Loading...</div>
+        <div className=" h-1/2 pt-[100px]">
+          <BarLoader
+            color="black"
+            loading={loading}
+            size={150}
+            aria-label="Loading Spinner"
+            data-testid="loader"
+          />
+        </div>
       ) : (
-        <div className="flex flex-col gap-4 items-center sm:items-stretch w-full">
-          <div className="flex justify-between gap-2">
-            <div id="admin" className="flex gap-2">
-              <CreateChat subscription={profileData?.subscription} />
-              {selectedChatRoom && (
-                <EditChat selectedChatRoom={selectedChatRoom} />
-              )}
-              {selectedChatRoom && (
-                <Invite selectedChatRoom={selectedChatRoom} users={users} />
-              )}
+        <div className="px-2 py-2 sm:px-8 sm:py-6 border rounded-lg w-full max-w-[360px] sm:max-w-screen-lg md:min-w-[740px] sm:min-w-[600px] dark:bg-gray-900 bg-gray-100 ">
+          <div className="flex flex-col gap-4 items-center sm:items-stretch w-full">
+            <div className="flex justify-between gap-2">
+              <div id="admin" className="flex gap-2">
+                <CreateChat subscription={profileData?.subscription} />
+                {selectedChatRoom && (
+                  <EditChat selectedChatRoom={selectedChatRoom} />
+                )}
+                {selectedChatRoom && (
+                  <Invite selectedChatRoom={selectedChatRoom} users={users} />
+                )}
+              </div>
+              <div id="user" className="flex gap-2">
+                {selectedChatRoom && (
+                  <Info users={users} selectedChatRoom={selectedChatRoom} />
+                )}
+                <ChatInvitations users={users} />
+                {selectedChatRoom && (
+                  <LeaveChat
+                    selectedChatRoom={selectedChatRoom}
+                    users={users}
+                  />
+                )}
+              </div>
             </div>
-            <div id="user" className="flex gap-2">
-              {selectedChatRoom && (
-                <Info users={users} selectedChatRoom={selectedChatRoom} />
-              )}
-              <ChatInvitations users={users} />
-              {selectedChatRoom && (
-                <LeaveChat selectedChatRoom={selectedChatRoom} />
-              )}
+            <div className="flex w-full">
+              <ChatList
+                selectedChatRoom={selectedChatRoom}
+                setSelectedChatRoom={setSelectedChatRoom}
+                chatRooms={chatRooms}
+                setChatRooms={setChatRooms}
+              />
             </div>
-          </div>
-          <div className="flex w-full">
-            <ChatList
-              selectedChatRoom={selectedChatRoom}
-              setSelectedChatRoom={setSelectedChatRoom}
-              chatRooms={chatRooms}
-              setChatRooms={setChatRooms}
-            />
-          </div>
-          <div>
-            <ChatRoom users={users} selectedChatRoom={selectedChatRoom} />
+            <div>
+              <ChatRoom users={users} selectedChatRoom={selectedChatRoom} />
+            </div>
           </div>
         </div>
       )}

@@ -8,9 +8,9 @@ async function Users() {
     <div className="flex flex-col gap-4">
       <div>Users:</div>
       <div className="flex flex-col gap-2">
-        {users.map((user) => {
+        {users.map((user, index) => {
           return (
-            <div key={user.id} className="flex gap-4 items-center">
+            <div key={user.id + index} className="flex gap-4 items-center">
               <div className="h-8 w-8">
                 <img src={user.imageUrl} alt="profile image" />
               </div>

@@ -165,11 +165,11 @@ function ChatInvitations({ users }: { users: any }) {
           </div>
         )}
         <div className="grid gap-4 py-4">
-          {filteredInvitations.map((invitation) => {
+          {filteredInvitations.map((invitation, index) => {
             const invitedByName = getFullNameById(invitation.invited_by);
             return (
               <div
-                key={invitation.participant_id}
+                key={invitation.participant_id + index}
                 className="border rounded px-4 py-2 flex flex-col "
               >
                 <div>Chat title: {invitation.chat_room_name}</div>

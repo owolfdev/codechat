@@ -8,6 +8,8 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
 
+import { useUser } from "@clerk/nextjs";
+
 import {
   Tooltip,
   TooltipContent,
@@ -28,6 +30,7 @@ import {
 
 import { useEffect, useState } from "react";
 import { set } from "react-hook-form";
+import { Divide } from "lucide-react";
 
 interface Participant {
   participant_id: string;
@@ -47,6 +50,18 @@ function Info({
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [participatingUsers, setParticipatingUsers] = useState<any[]>([]);
   const { getParticipantsForChatRoom } = useSupabaseChat();
+
+  const { user } = useUser();
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (selectedChatRoom && user?.id === selectedChatRoom.admin_id) {
+      setIsAdmin(true);
+    } else {
+      setIsAdmin(false);
+    }
+  }, [selectedChatRoom, user]);
 
   const getFullNameById = async (userId: string) => {
     const response = await fetch("/api/get-user-by-id", {
@@ -133,14 +148,20 @@ function Info({
           </div>
           <div>
             <span className="font-bold">Administrator:</span>{" "}
-            {getFullNameById(selectedChatRoom?.admin_id)}
+            <span>
+              {isAdmin ? (
+                <span>You are Admin.</span>
+              ) : (
+                <span>{getFullNameById(selectedChatRoom?.admin_id)}</span>
+              )}
+            </span>
           </div>
           <div className="flex flex-col gap-2">
             {/* <div>Participating Users:{JSON.stringify(participatingUsers)}</div> */}
             <span className="font-bold">Participants:</span>
             <div>
               {participatingUsers?.map((participant, index) => (
-                <div key={index}>
+                <div key={participant?.firstName + index}>
                   {participant?.firstName} {participant?.lastName}{" "}
                 </div>
               ))}

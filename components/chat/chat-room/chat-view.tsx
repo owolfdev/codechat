@@ -165,13 +165,13 @@ function ChatView({
           )?.imageUrl;
 
           return message.sender_id === user?.id ? (
-            <div key={message.id + index} className="flex justify-end w-full">
+            <div key={index} className="flex justify-end w-full">
               <div className="w-full sm:w-11/12">
                 <ChatMessage message={message} chatRoom={selectedChatRoom} />
               </div>
             </div>
           ) : (
-            <div key={message.id + index} className="flex justify-start w-full">
+            <div key={index} className="flex justify-start w-full">
               <div className="w-full sm:w-11/12">
                 <ChatMessage
                   message={message}
