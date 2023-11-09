@@ -5,6 +5,9 @@ import RSSelect, { StylesConfig } from "react-select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AiOutlineSend } from "react-icons/ai";
+import { useAuth } from "@clerk/nextjs";
+
+import { initializeSupabaseClient } from "@/lib/supabaseClient";
 
 import { useTheme } from "next-themes";
 
@@ -48,6 +51,8 @@ const popularLanguages = [
   "c#",
   // Add more languages as needed
 ];
+
+const maxMessagesForFree = 25;
 
 interface CustomStyles {
   option: (defaultStyles: any, state: any) => any;
@@ -155,11 +160,16 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
 
   const { sendChatMessage, getChatMessagesForChatRoom } = useSupabaseChat();
 
+  const [currentChatRoomId, setCurrentChatRoomId] = React.useState<any>(null);
+
+  const { getToken } = useAuth();
+
   const { resolvedTheme } = useTheme();
 
   const [chatMessages, setChatMessages] = React.useState<any>([]);
 
   const getMessages = async (chatRoomId: any) => {
+    // console.log("getMessages::::", chatRoomId);
     const messages = await getChatMessagesForChatRoom(chatRoomId);
     setChatMessages(messages);
   };
@@ -169,6 +179,12 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
       getMessages(selectedChatRoom?.chat_room_id);
     }
   }, [selectedChatRoom]);
+
+  useEffect(() => {
+    if (selectedChatRoom?.chat_room_id) {
+      setCurrentChatRoomId(selectedChatRoom?.chat_room_id); // Set the chatRoomId in state when it changes
+    }
+  }, [selectedChatRoom?.chat_room_id]);
 
   useEffect(() => {
     setCustomStyles(customStylesDef(resolvedTheme));
@@ -183,6 +199,45 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
   //   setCustomStyles(customStylesDef(theme));
   // }, [theme]);
 
+  useEffect(() => {
+    let supabaseRealtime: any;
+
+    const subscribeToRealtime = async () => {
+      const supabaseAccessToken = await getToken({
+        template: "supabase-codechat",
+      });
+      const supabase = initializeSupabaseClient(supabaseAccessToken);
+
+      if (user) {
+        supabaseRealtime = supabase
+          .channel("get_messages_on_delete")
+          .on(
+            "postgres_changes",
+            { event: "DELETE", schema: "public", table: "chat_messages" },
+            async (payload: any) => {
+              console.log("currentChatRoomId", currentChatRoomId);
+              getMessages(currentChatRoomId); // Pass the chatRoomId to getMessages
+            }
+          )
+          .subscribe();
+      }
+    };
+
+    const unsubscribeFromRealtime = async () => {
+      if (supabaseRealtime) {
+        await supabaseRealtime.unsubscribe();
+      }
+    };
+
+    if (user && currentChatRoomId) {
+      subscribeToRealtime();
+    }
+
+    return () => {
+      unsubscribeFromRealtime();
+    };
+  }, [user, currentChatRoomId]);
+
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -190,7 +245,7 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
       if (selectedChatRoom?.chat_room_id) {
         getMessages(selectedChatRoom?.chat_room_id);
       }
-      if (chatMessages.length > 3) {
+      if (chatMessages.length > maxMessagesForFree) {
         alert("You are on a free plan. Please upgrade to more messages.");
         return;
       }
@@ -250,7 +305,7 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
       {selectedChatRoom && (
         <form action="" onSubmit={handleSend}>
           <div className="flex flex-col gap-4 w-full">
-            {chatMessages.length > 3 && (
+            {chatMessages.length > maxMessagesForFree && (
               <div className="flex w-full text-sm text-red-500 px-4">
                 You have reached the limit of allowed chat messages for the free
                 tier. Please delete some messages, or upgrade to increase your

@@ -143,7 +143,7 @@ function ChatMessage({
     }
 
     if (user) {
-      setIsAdmin(user.id === chatRoom.admin_id);
+      setIsAdmin(user?.id === chatRoom?.admin_id || false);
     }
   }, [chatRoom, user]);
 

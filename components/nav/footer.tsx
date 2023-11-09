@@ -14,6 +14,7 @@ function Footer() {
           <Link href="/about">About - </Link>
           <Link href="/contact">Contact - </Link>{" "}
           <Link href="/privacy">Privacy</Link>
+          {/* <Link href="/upgrade">Upgrade</Link> */}
         </div>
       </div>
     </footer>
