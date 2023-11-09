@@ -6,6 +6,7 @@ import { Open_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/nav/site-header";
 import { Toaster } from "@/components/ui/toaster";
+import CookieConsentComponent from "@/components/cookie-consent";
 
 import Footer from "@/components/nav/footer";
 
@@ -52,6 +53,7 @@ export default function RootLayout({
               </main>
               <Toaster />
             </div>
+            <CookieConsentComponent />
             <Footer />
           </ThemeProvider>
         </body>
