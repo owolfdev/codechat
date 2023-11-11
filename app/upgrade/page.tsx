@@ -4,6 +4,8 @@ import { Divide } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
+import SimpleButton from "@/components/payments/simple-button";
+import PayPalButton from "@/components/payments/paypal-button";
 
 export default async function Home() {
   const defaultButtonVariant = buttonVariants({ variant: "default" });
@@ -84,7 +86,7 @@ export default async function Home() {
                 href="/app"
                 className={`${defaultButtonVariant} dark:bg-black text-white w-full`}
               >
-                Get Started
+                Current Plan
               </Link>
             </div>
           </div>
@@ -159,12 +161,8 @@ export default async function Home() {
               </ul>
             </div>
             <div className="mt-6">
-              <Link
-                href="/app"
-                className={`${defaultButtonVariant} dark:bg-black text-white w-full`}
-              >
-                Get Started
-              </Link>
+              {/* <SimpleButton /> */}
+              <PayPalButton />
             </div>
           </div>
         </div>

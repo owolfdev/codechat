@@ -3,6 +3,7 @@ import { UserButton } from "@clerk/nextjs";
 import { buttonVariants } from "@/components/ui/button";
 import { ModeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import UpgradeButton from "@/components/payments/upgrade-button";
 
 export function SiteHeader() {
   const ghostButtonVariant = buttonVariants({ variant: "ghost" });
@@ -19,9 +20,8 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center justify-end flex-1 space-x-4">
           <div className="flex gap-4 items-center">
-            <Link href="/upgrade" className={`${ghostButtonVariant}`}>
-              Upgrade
-            </Link>
+            <UpgradeButton />
+
             <div className="pr-2">
               <UserButton afterSignOutUrl="/" />
             </div>

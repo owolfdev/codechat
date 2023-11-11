@@ -6,7 +6,7 @@ import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
   // "/" will be accessible to all users
-  publicRoutes: ["/", "/upgrade", "/contact", "/about", "/privacy"],
+  publicRoutes: ["/", "/contact", "/about", "/privacy"],
 });
 
 export const config = {
