@@ -56,6 +56,7 @@ const PayPalButton = () => {
                     "here is the user from PayPal button (front end)",
                     user?.id
                   );
+                  //update the user's subscription status in the database
                   modifyProfileSubscription(user?.id as string, "paid");
 
                   router.push("/subscription");
