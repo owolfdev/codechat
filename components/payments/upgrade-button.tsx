@@ -4,6 +4,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { useUser } from "@clerk/nextjs";
 import { useSupabaseChat } from "@/hooks/useSupabaseChat";
+import { IoSettingsOutline } from "react-icons/io5";
 
 function UpgradeButton() {
   const { user } = useUser();
@@ -27,7 +28,9 @@ function UpgradeButton() {
       </Link>
     ) : (
       <Link href="/subscription" className={`${ghostButtonVariant}`}>
-        <span>Subscription</span>
+        <span className="">
+          <IoSettingsOutline size={20} />
+        </span>
       </Link>
     );
   }

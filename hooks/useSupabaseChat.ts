@@ -530,6 +530,13 @@ export function useSupabaseChat() {
     userId: string,
     newSubscription: string
   ) => {
+    console.log(
+      "modifyProfileSubscription: userId",
+      userId,
+      "newSubscription",
+      newSubscription
+    );
+
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",

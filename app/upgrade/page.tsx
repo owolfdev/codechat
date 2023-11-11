@@ -1,3 +1,6 @@
+"use client";
+
+import { use, useEffect } from "react";
 import ChatContainer from "@/components/chat/chat-container";
 import { getAllUsers, getCurrentUser, getUserById } from "@/lib/clerkUtils";
 import { Divide } from "lucide-react";
@@ -7,8 +10,21 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import SimpleButton from "@/components/payments/simple-button";
 import PayPalButton from "@/components/payments/paypal-button";
 
-export default async function Home() {
+export default function Home() {
   const defaultButtonVariant = buttonVariants({ variant: "default" });
+
+  // useEffect(() => {
+  //   // Check local storage for the subscription setting
+  //   const subscriptionStatus = localStorage.getItem("subscription");
+
+  //   if (!subscriptionStatus || subscriptionStatus !== "free") {
+  //     // Set the local storage value to 'free'
+  //     localStorage.setItem("subscription", "free");
+
+  //     // Reload the page
+  //     window.location.reload();
+  //   }
+  // }, []);
 
   return (
     <section className="">
@@ -156,7 +172,26 @@ export default async function Home() {
                       <polyline points="20 6 9 17 4 12" />
                     </svg>
                   </span>
-                  Invite your friends.
+                  Invite your Friends.
+                </li>
+                <li className="flex items-center">
+                  <span className="bg-green-500 rounded-full mr-2 p-1">
+                    <svg
+                      className=" text-white text-xs"
+                      fill="none"
+                      height="24"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  </span>
+                  One time Payment.
                 </li>
               </ul>
             </div>

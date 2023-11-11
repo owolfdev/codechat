@@ -12,6 +12,8 @@ import LeaveChat from "./leave-chat";
 import ChatRoom from "./chat-room/chat-room";
 import Info from "./info";
 
+import { useRouter } from "next/navigation";
+
 import BarLoader from "react-spinners/BarLoader";
 
 import { initializeSupabaseClient } from "@/lib/supabaseClient";
@@ -52,6 +54,8 @@ function ChatContainer({
     null
   ); // Update the type here
 
+  const router = useRouter();
+
   const getChatRoomsForUser = async () => {
     const chatRoomsData = await getChatRooms();
     if (chatRoomsData !== undefined) {
@@ -81,6 +85,10 @@ function ChatContainer({
 
     return profile;
   };
+
+  // useEffect(() => {
+  //   router.refresh();
+  // }, [router]);
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn || !userId) return;

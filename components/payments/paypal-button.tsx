@@ -10,6 +10,7 @@ const PayPalButton = () => {
   const { modifyProfileSubscription } = useSupabaseChat();
   const { user } = useUser();
   const router = useRouter();
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `https://www.paypal.com/sdk/js?client-id=${payPalClientID}&currency=USD`;
@@ -56,7 +57,8 @@ const PayPalButton = () => {
                     user?.id
                   );
                   modifyProfileSubscription(user?.id as string, "paid");
-                  router.push("/app");
+
+                  router.push("/subscription");
                 })
                 .catch((error) => console.error(error));
             });
@@ -65,7 +67,7 @@ const PayPalButton = () => {
         .render("#paypal-button-container");
     });
     document.body.appendChild(script);
-  }, []);
+  }, [user]);
 
   return (
     <div id="paypal-button-container">
