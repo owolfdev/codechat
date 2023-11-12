@@ -530,12 +530,12 @@ export function useSupabaseChat() {
     userId: string,
     newSubscription: string
   ) => {
-    console.log(
-      "modifyProfileSubscription: userId",
-      userId,
-      "newSubscription",
-      newSubscription
-    );
+    // console.log(
+    //   "modifyProfileSubscription: userId",
+    //   userId,
+    //   "newSubscription",
+    //   newSubscription
+    // );
 
     if (user) {
       const supabaseAccessToken = await getToken({
@@ -554,6 +554,7 @@ export function useSupabaseChat() {
         console.error(error);
         alert("Error modifying profile subscription");
       } else {
+        return "success";
         // You can add any additional logic here if needed
       }
     }

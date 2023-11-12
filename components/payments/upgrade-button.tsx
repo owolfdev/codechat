@@ -20,14 +20,17 @@ function UpgradeButton() {
     });
   }, [user]);
 
-  const ghostButtonVariant = buttonVariants({ variant: "ghost" });
+  const defaultButtonVariant = buttonVariants({ variant: "default" });
   {
     return user && profile?.subscription === "free" ? (
-      <Link href="/upgrade" className={`${ghostButtonVariant}`}>
+      <Link
+        href="/upgrade"
+        className={`${defaultButtonVariant}, bg-yellow-400 hover:bg-yellow-200 h-8 w-20 `}
+      >
         <span>Upgrade</span>
       </Link>
     ) : (
-      <Link href="/subscription" className={`${ghostButtonVariant}`}>
+      <Link href="/subscription">
         <span className="">
           <IoSettingsOutline size={20} />
         </span>

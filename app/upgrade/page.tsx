@@ -27,7 +27,7 @@ export default function Home() {
   useEffect(() => {
     findProfileByUserId(user?.id as string).then((profile) => {
       if (profile) {
-        if (profile.subscription_status === "paid") {
+        if (profile.subscription === "paid") {
           setSubscriptionStatus("Pro");
           setSubscriptionStatusMessage(subscriptionStatusMessages.pro);
         } else {
@@ -39,7 +39,7 @@ export default function Home() {
         setSubscriptionStatusMessage(subscriptionStatusMessages.free);
       }
     });
-  }, []);
+  }, [user?.id]);
 
   return (
     <section className="">

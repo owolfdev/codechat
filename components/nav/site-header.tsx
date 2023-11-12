@@ -20,12 +20,11 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center justify-end flex-1 space-x-4">
           <div className="flex gap-4 items-center">
-            <UpgradeButton />
-
             <div className="pr-2">
               <UserButton afterSignOutUrl="/" />
             </div>
             <ModeToggle />
+            <UpgradeButton />
           </div>
         </div>
       </div>

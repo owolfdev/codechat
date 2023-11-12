@@ -17,7 +17,7 @@ export default async function Home() {
                 Its nice to share ;).
               </h1>
               <p className="max-w-[600px] text-zinc-600 md:text-xl dark:text-zinc-100 mx-auto">
-                Share code snippets with fellow nerds.
+                Share code snippets with fellow coders.
               </p>
             </div>
             <div className="flex flex-col gap-2 text-left pb-8">
