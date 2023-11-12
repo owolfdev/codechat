@@ -54,6 +54,16 @@ function ChatContainer({
     null
   ); // Update the type here
 
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (loading) {
+      setTimeout(() => {
+        setLoaded(true);
+      }, 2000);
+    }
+  }, [loading]);
+
   const router = useRouter();
 
   const getChatRoomsForUser = async () => {
@@ -69,7 +79,9 @@ function ChatContainer({
     if (chatRoomsData !== undefined) {
       setChatRooms(chatRoomsData);
     }
+
     setLoading(false);
+
     return chatRoomsData;
   };
 

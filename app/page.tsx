@@ -1,3 +1,6 @@
+"use client";
+
+import { use, useEffect } from "react";
 import ChatContainer from "@/components/chat/chat-container";
 import { getAllUsers, getCurrentUser, getUserById } from "@/lib/clerkUtils";
 import { Divide } from "lucide-react";
@@ -5,8 +8,20 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button, buttonVariants } from "@/components/ui/button";
 
-export default async function Home() {
+export default function Home() {
   const defaultButtonVariant = buttonVariants({ variant: "default" });
+
+  const updateSupabase = async () => {
+    const data = await fetch("/api/update-supabase", {
+      method: "POST",
+    });
+    console.log("update supabase: ", data);
+  };
+
+  useEffect(() => {
+    updateSupabase();
+  }, []);
+
   return (
     <section className="w-full  py-8 md:py-12 lg:py-24">
       <div className="container px-4 md:px-6">
