@@ -102,7 +102,9 @@ export function ContactForm() {
     }
     try {
       // Save the form values to the Supabase table
-      const { data, error } = await supabase.from("contacts").insert([values]);
+      const { data, error } = await supabase
+        .from("feedback_submissions")
+        .insert([values]);
 
       if (error) throw error;
 

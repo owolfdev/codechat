@@ -1,34 +1,61 @@
 "use client";
 
-import { use, useEffect } from "react";
-import ChatContainer from "@/components/chat/chat-container";
-import { getAllUsers, getCurrentUser, getUserById } from "@/lib/clerkUtils";
-import { Divide } from "lucide-react";
 import Link from "next/link";
-import { Input } from "@/components/ui/input";
+import { useUser } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+
 import { Button, buttonVariants } from "@/components/ui/button";
-import SimpleButton from "@/components/payments/simple-button";
 import PayPalButton from "@/components/payments/paypal-button";
+import { useSupabaseChat } from "@/hooks/useSupabaseChat";
+
+const subscriptionStatusMessages = {
+  free: "You can upgrade to enable more options.",
+  pro: " You can create new chat rooms and have unlimited chat messages.",
+};
 
 export default function Home() {
   const defaultButtonVariant = buttonVariants({ variant: "default" });
 
-  // useEffect(() => {
-  //   // Check local storage for the subscription setting
-  //   const subscriptionStatus = localStorage.getItem("subscription");
+  const { user } = useUser();
 
-  //   if (!subscriptionStatus || subscriptionStatus !== "free") {
-  //     // Set the local storage value to 'free'
-  //     localStorage.setItem("subscription", "free");
+  const { findProfileByUserId } = useSupabaseChat();
 
-  //     // Reload the page
-  //     window.location.reload();
-  //   }
-  // }, []);
+  const [subscriptionStatus, setSubscriptionStatus] = useState("free");
+  const [subscriptionStatusMessage, setSubscriptionStatusMessage] =
+    useState("");
+
+  useEffect(() => {
+    findProfileByUserId(user?.id as string).then((profile) => {
+      if (profile) {
+        if (profile.subscription_status === "paid") {
+          setSubscriptionStatus("Pro");
+          setSubscriptionStatusMessage(subscriptionStatusMessages.pro);
+        } else {
+          setSubscriptionStatus("free");
+          setSubscriptionStatusMessage(subscriptionStatusMessages.free);
+        }
+      } else {
+        setSubscriptionStatus("free");
+        setSubscriptionStatusMessage(subscriptionStatusMessages.free);
+      }
+    });
+  }, []);
 
   return (
     <section className="">
       <div className="container px-4 md:px-6">
+        {/*  */}
+        <div className="flex flex-col justify-center space-y-8 text-center">
+          <div className="space-y-8">
+            <h1 className="sm:min-h-[70px] text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none bg-clip-text text-transparent bg-gradient-to-r dark:from-white dark:to-gray-500 from-black to-gray-600 ">
+              You are on the {subscriptionStatus} plan.
+            </h1>
+            <p className="max-w-[600px] text-zinc-600 md:text-xl dark:text-zinc-100 mx-auto">
+              {subscriptionStatusMessage}
+            </p>
+          </div>
+        </div>
+        {/*  */}
         <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 md:gap-8">
           <div className="flex flex-col p-6 bg-white shadow-lg rounded-lg dark:bg-zinc-850 justify-between dark:text-gray-800">
             <div>
@@ -97,12 +124,15 @@ export default function Home() {
                 </li>
               </ul>
             </div>
-            <div className="mt-6">
+            <div className="flex justify-center w-72 font-bold text-xl">
+              Chat for free, forever.
+            </div>
+            <div className="">
               <Link
                 href="/app"
                 className={`${defaultButtonVariant} dark:bg-black text-white w-full`}
               >
-                Current Plan
+                Start Chatting for Free
               </Link>
             </div>
           </div>
