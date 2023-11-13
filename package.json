@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.38.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "cors": "^2.8.5",
     "lucide-react": "^0.287.0",
     "next": "13.5.4",
     "next-themes": "^0.2.1",
@@ -44,6 +45,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.16",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.13",
     "@types/react": "^18",

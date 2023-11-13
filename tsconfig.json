@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "paypal.d.ts",
-    "lib/supabase-client.js"
+    "lib/supabase-client.js",
+    "app/api/update/route.ts"
   ],
   "exclude": ["node_modules"]
 }
