@@ -57,7 +57,7 @@ export default function Home() {
         </div>
         {/*  */}
         <div className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2 md:gap-8">
-          <div className="flex flex-col p-6 bg-white shadow-lg rounded-lg dark:bg-zinc-850 justify-between dark:text-gray-800">
+          <div className="flex flex-col gap-8 p-6 bg-white shadow-lg rounded-lg dark:bg-zinc-850 justify-between dark:text-gray-800">
             <div>
               <h3 className="text-2xl font-bold text-center">Free</h3>
               <div className="mt-4 text-center text-zinc-600">

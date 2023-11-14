@@ -36,7 +36,6 @@ export default function Subscription() {
 
   useEffect(() => {
     findProfileByUserId(user?.id as string).then((profile) => {
-      console.log("profile from subscription page!!!!:", profile, user?.id);
       if (profile) {
         if (profile.subscription === "paid") {
           setSubscriptionStatus("Pro");
@@ -52,14 +51,10 @@ export default function Subscription() {
     });
   }, [user?.id]);
 
-  const handleShowCancelDialog = () => {
-    console.log("show cancel dialog");
-  };
+  const handleShowCancelDialog = () => {};
 
   const handleCancelSubscription = () => {
-    console.log("cancel subscription");
     modifyProfileSubscription(user?.id as string, "free").then((res) => {
-      console.log("res from cancel subscription:", res);
       if (res) {
         setSubscriptionStatus("free");
         setSubscriptionStatusMessage(subscriptionStatusMessages.free);

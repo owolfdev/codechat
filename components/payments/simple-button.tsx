@@ -18,14 +18,6 @@ const SimpleButton = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(
-          "here is the response data from simple button (front end)",
-          data
-        );
-        console.log(
-          "here is the user from simple button (front end)",
-          user?.id
-        );
         modifyProfileSubscription(user?.id as string, "paid");
         router.push("/app");
       })

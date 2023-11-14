@@ -10,8 +10,6 @@ const supabase = createClient(
 );
 
 export async function POST() {
-  console.log("api/update-supabase/route.ts");
-
   const data = await supabase
     .from("update")
 
@@ -22,8 +20,6 @@ export async function POST() {
   if (data.error) {
     return NextResponse.error();
   }
-
-  console.log("heres the data:", data);
 
   return NextResponse.json({
     message: `Success! ${NEXT_PUBLIC_SUPABASE_URL} ${NEXT_PUBLIC_SUPABASE_KEY}`,

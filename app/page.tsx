@@ -15,7 +15,6 @@ export default function Home() {
     const data = await fetch("/api/update-supabase", {
       method: "POST",
     });
-    console.log("update supabase: ", data);
   };
 
   useEffect(() => {

@@ -169,7 +169,6 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
   const [chatMessages, setChatMessages] = React.useState<any>([]);
 
   const getMessages = async (chatRoomId: any) => {
-    // console.log("getMessages::::", chatRoomId);
     const messages = await getChatMessagesForChatRoom(chatRoomId);
     setChatMessages(messages);
   };
@@ -215,7 +214,6 @@ function ChatRoom({ users, selectedChatRoom, subscription }: any) {
             "postgres_changes",
             { event: "DELETE", schema: "public", table: "chat_messages" },
             async (payload: any) => {
-              console.log("currentChatRoomId", currentChatRoomId);
               getMessages(currentChatRoomId); // Pass the chatRoomId to getMessages
             }
           )

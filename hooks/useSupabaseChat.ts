@@ -499,7 +499,6 @@ export function useSupabaseChat() {
   };
 
   const createProfile = async (userId: string, subscription: string) => {
-    console.log("createProfile: userId", userId, "subscription", subscription);
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -530,13 +529,6 @@ export function useSupabaseChat() {
     userId: string,
     newSubscription: string
   ) => {
-    // console.log(
-    //   "modifyProfileSubscription: userId",
-    //   userId,
-    //   "newSubscription",
-    //   newSubscription
-    // );
-
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -561,7 +553,6 @@ export function useSupabaseChat() {
   };
 
   const findProfileByUserId = async (userId: string) => {
-    console.log("findProfileByUserId: userId", userId);
     if (user) {
       const supabaseAccessToken = await getToken({
         template: "supabase-codechat",
@@ -574,8 +565,6 @@ export function useSupabaseChat() {
         .from("profiles")
         .select("*")
         .eq("id", userId);
-
-      console.log("findProfileByUserId: profileData", profileData);
 
       if (profileError) {
         console.error(profileError);

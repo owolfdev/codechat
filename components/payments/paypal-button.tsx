@@ -48,14 +48,6 @@ const PayPalButton = () => {
               })
                 .then((response) => response.json())
                 .then((data) => {
-                  console.log(
-                    "here is the response data from PayPal button (front end)",
-                    data
-                  );
-                  console.log(
-                    "here is the user from PayPal button (front end)",
-                    user?.id
-                  );
                   //update the user's subscription status in the database
                   modifyProfileSubscription(user?.id as string, "paid");
 

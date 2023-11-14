@@ -109,9 +109,7 @@ function LeaveChat({ selectedChatRoom, users }: any) {
     }
   }, [selectedChatRoom]);
 
-  useEffect(() => {
-    console.log("participating users", participatingUsers);
-  }, [participatingUsers]);
+  useEffect(() => {}, [participatingUsers]);
 
   useEffect(() => {
     const fetchInvitations = async () => {
@@ -154,10 +152,7 @@ function LeaveChat({ selectedChatRoom, users }: any) {
     // changeParticipantStatus("deleted", filteredInvitations[0].participant_id);
   };
 
-  const handleCheckboxChange = (e: any) => {
-    console.log("e: ", e);
-    console.log("e.target.checked: ", e.target);
-  };
+  const handleCheckboxChange = (e: any) => {};
 
   const handleCloseDialog = () => {
     if (dialogRef.current) {

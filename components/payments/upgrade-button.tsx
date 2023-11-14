@@ -13,9 +13,7 @@ function UpgradeButton() {
   const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
-    console.log("user from upgrade button", user);
     findProfileByUserId(user?.id as string).then((data) => {
-      console.log("profile from upgrade button", data);
       setProfile(data);
     });
   }, [user]);

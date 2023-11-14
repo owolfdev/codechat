@@ -108,7 +108,6 @@ export function ContactForm() {
 
       if (error) throw error;
 
-      console.log("Saved to Supabase:", data);
       router.push("/contact/thank-you");
       // alert("Form submitted successfully!");
     } catch (error) {

@@ -86,14 +86,11 @@ function ChatContainer({
   };
 
   const getProfile = async (_userId: string) => {
-    console.log("getProfile: ", _userId);
     let profile = await findProfileByUserId(_userId);
 
     if (profile === undefined) {
       profile = await createProfile(_userId, "free");
     }
-
-    console.log("profile: ", profile);
 
     return profile;
   };
@@ -104,10 +101,8 @@ function ChatContainer({
 
   useEffect(() => {
     if (!isLoaded || !isSignedIn || !userId) return;
-    console.log("check for user profile: ", user, userId);
     getChatRoomsForUser();
     getProfile(userId!).then((data: any) => {
-      console.log("data from subscription: ", data);
       setProfileData({
         id: userId!,
         firstName: user!.firstName,
@@ -119,9 +114,7 @@ function ChatContainer({
     });
   }, [isLoaded, isSignedIn, user, userId]);
 
-  useEffect(() => {
-    console.log("profileData", profileData);
-  }, [profileData]);
+  useEffect(() => {}, [profileData]);
 
   useEffect(() => {
     let supabaseRealtime: any;
