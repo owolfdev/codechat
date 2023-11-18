@@ -23,7 +23,7 @@ function UpgradeButton() {
     return user && profile?.subscription === "free" ? (
       <Link
         href="/upgrade"
-        className={`${defaultButtonVariant}, bg-yellow-400 hover:bg-yellow-200 h-8 w-20 `}
+        className={`${defaultButtonVariant}, bg-yellow-400 text-black hover:bg-yellow-200 h-8 w-20 `}
       >
         <span>Upgrade</span>
       </Link>
